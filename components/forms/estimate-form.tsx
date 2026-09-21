@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AreaField, ChoiceField, FormStatus, SuccessPanel, TextField } from "@/components/forms/controls";
-import { estimateSchema } from "@/lib/leads";
+import { acceptLead, estimateSchema } from "@/lib/leads";
 import { services } from "@/lib/content";
 
 const projectTypes = [...services.map((service) => service.name), "Several of these"];
@@ -67,30 +67,15 @@ export function EstimateForm() {
     if (!validate(stepFields[3])) return;
     setStatus("loading");
     setMessage("");
-    try {
-      const response = await fetch("/api/estimates", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      const data = (await response.json()) as {
-        ok: boolean;
-        reference?: string;
-        message?: string;
-        fieldErrors?: Record<string, string>;
-      };
-      if (!response.ok || !data.ok || !data.reference) {
-        setStatus("error");
-        setMessage(data.message ?? "The estimate could not be sent.");
-        setErrors(data.fieldErrors ?? {});
-        return;
-      }
-      setReference(data.reference);
-      setStatus("success");
-    } catch {
+    const data = acceptLead(estimateSchema, values, "EST");
+    if (!data.ok) {
       setStatus("error");
-      setMessage("The shop could not be reached. Try again in a moment.");
+      setMessage(data.message);
+      setErrors(data.fieldErrors);
+      return;
     }
+    setReference(data.reference);
+    setStatus("success");
   }
 
   if (status === "success") {

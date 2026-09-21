@@ -57,6 +57,22 @@ export function referenceCode(prefix: "EST" | "PRM" | "MSG") {
   return `HX-${prefix}-${salt}`;
 }
 
+export function acceptLead(
+  schema: z.ZodType,
+  data: unknown,
+  prefix: "EST" | "PRM" | "MSG",
+) {
+  const parsed = schema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      ok: false as const,
+      message: "Check the highlighted fields.",
+      fieldErrors: fieldErrors(parsed.error),
+    };
+  }
+  return { ok: true as const, reference: referenceCode(prefix) };
+}
+
 export async function deliverLead(kind: string, reference: string, data: unknown) {
   const url = process.env.LEAD_WEBHOOK_URL;
   if (!url) return;

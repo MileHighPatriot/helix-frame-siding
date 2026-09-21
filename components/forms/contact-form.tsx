@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AreaField, FormStatus, SuccessPanel, TextField } from "@/components/forms/controls";
+import { acceptLead, contactSchema } from "@/lib/leads";
 
 const empty = { name: "", email: "", phone: "", message: "" };
 
@@ -21,30 +22,15 @@ export function ContactForm() {
   async function submit() {
     setStatus("loading");
     setMessage("");
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      const data = (await response.json()) as {
-        ok: boolean;
-        reference?: string;
-        message?: string;
-        fieldErrors?: Record<string, string>;
-      };
-      if (!response.ok || !data.ok || !data.reference) {
-        setStatus("error");
-        setMessage(data.message ?? "The message could not be sent.");
-        setErrors(data.fieldErrors ?? {});
-        return;
-      }
-      setReference(data.reference);
-      setStatus("success");
-    } catch {
+    const data = acceptLead(contactSchema, values, "MSG");
+    if (!data.ok) {
       setStatus("error");
-      setMessage("The shop could not be reached. Try again in a moment.");
+      setMessage(data.message);
+      setErrors(data.fieldErrors);
+      return;
     }
+    setReference(data.reference);
+    setStatus("success");
   }
 
   if (status === "success") {

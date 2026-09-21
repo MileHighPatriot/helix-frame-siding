@@ -18,7 +18,7 @@ export default function EstimatesPage() {
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[0.8fr_1.2fr] md:px-8">
         <div className="space-y-4 text-sm leading-6 text-muted-foreground">
           <p>Estimates cover framing and siding in detail. Partner trades are listed as allowances until their own walk.</p>
-          <p>You will get a reference number on this page. Email delivery is optional and only runs when a webhook is configured for the shop.</p>
+          <p>You will get a reference number on this page as soon as the request is valid.</p>
           <ol className="space-y-2 border-l border-border pl-4">
             <li>Project type</li>
             <li>Address, timeline, budget</li>

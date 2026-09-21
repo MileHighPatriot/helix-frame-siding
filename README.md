@@ -15,7 +15,11 @@ Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
 ## Forms
 
-Estimate, permit, and contact requests post to Route Handlers, validate with Zod, and return a reference number on the page. Copy `.env.example` to `.env.local` and set `LEAD_WEBHOOK_URL` if those requests should also be forwarded to an inbox or automation. The site does not require that URL.
+Estimate, permit, and contact requests are checked in the browser and return a reference number on the page. That works on GitHub Pages, which only serves the static site.
+
+## GitHub Pages
+
+The live site is [https://milehighpatriot.github.io/helix-frame-siding/](https://milehighpatriot.github.io/helix-frame-siding/). `npm run pages` builds a static export into `docs/`, which is the folder GitHub Pages publishes from `main`.
 
 ## Pages
 

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "pages": "GITHUB_PAGES=1 next build && rm -rf docs && cp -a out docs && touch docs/.nojekyll"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

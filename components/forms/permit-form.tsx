@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AreaField, ChoiceField, FormStatus, SuccessPanel, TextField } from "@/components/forms/controls";
 import { jurisdictions, services } from "@/lib/content";
-import { permitSchema } from "@/lib/leads";
+import { acceptLead, permitSchema } from "@/lib/leads";
 
 const projectTypes = services.map((service) => service.name);
 const drawings = [
@@ -67,30 +67,15 @@ export function PermitForm() {
     if (!validate(stepFields[3])) return;
     setStatus("loading");
     setMessage("");
-    try {
-      const response = await fetch("/api/permits", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      const data = (await response.json()) as {
-        ok: boolean;
-        reference?: string;
-        message?: string;
-        fieldErrors?: Record<string, string>;
-      };
-      if (!response.ok || !data.ok || !data.reference) {
-        setStatus("error");
-        setMessage(data.message ?? "The permit request could not be sent.");
-        setErrors(data.fieldErrors ?? {});
-        return;
-      }
-      setReference(data.reference);
-      setStatus("success");
-    } catch {
+    const data = acceptLead(permitSchema, values, "PRM");
+    if (!data.ok) {
       setStatus("error");
-      setMessage("The shop could not be reached. Try again in a moment.");
+      setMessage(data.message);
+      setErrors(data.fieldErrors);
+      return;
     }
+    setReference(data.reference);
+    setStatus("success");
   }
 
   if (status === "success") {
