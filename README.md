@@ -15,7 +15,7 @@ Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
 ## Design scenes
 
-Each service keeps one finished project in the frame. The controls change that part of the photograph: siding field and gable, deck boards, handrail, and fascia, and the same kind of split for outdoor structures, remodels, additions, and framing. Color tints the masked region. The estimate uses those same controls, and the scope sheet shows the composite with the written spec.
+Each service keeps one finished project in the frame. The controls change that part of the photograph: siding field and gable, deck boards, handrail, and fascia, and the same kind of split for outdoor structures, remodels, additions, and framing. A color control repaints that surface in the swatch. Sky, brick, and landscaping stay as photographed. The estimate uses those same controls, and the scope sheet shows the composite with the written spec.
 
 ## Forms
 

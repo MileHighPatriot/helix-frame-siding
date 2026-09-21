@@ -12,16 +12,6 @@ export const palette = {
 
 export type ColorId = keyof typeof palette;
 
-const washStrength: Record<ColorId, number> = {
-  "warm-white": 0.28,
-  pale: 0.22,
-  mill: 0.55,
-  sage: 0.7,
-  cedar: 0.72,
-  graphite: 0.82,
-  black: 0.95,
-};
-
 export type SceneLayer = { src: string; mask?: string };
 
 export type SceneWash = {
@@ -244,7 +234,7 @@ export function controlsFor(service: ServiceSlug, selection: Bag): SceneControl[
 
 function wash(file: string, color: string, slot: "base" | "top"): SceneWash {
   const tone = palette[color as ColorId];
-  return { mask: maskOf(file), hex: tone.hex, strength: washStrength[color as ColorId], slot };
+  return { mask: maskOf(file), hex: tone.hex, strength: 1, slot };
 }
 
 function sidingStem(selection: Bag) {
