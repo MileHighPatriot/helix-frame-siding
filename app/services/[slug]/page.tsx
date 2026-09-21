@@ -7,7 +7,7 @@ import { Photo } from "@/components/photo";
 import { ProjectCard } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
 import { buttonVariants } from "@/components/ui/button";
-import { designsFor, getService, projectsForService, serviceComparisons, servicePhotos, services } from "@/lib/content";
+import { getService, projectsForService, serviceComparisons, servicePhotos, services } from "@/lib/content";
 import { cn } from "cn";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -73,11 +73,11 @@ export default async function ServicePage({ params }: Props) {
               Materials, colors, and the way the piece is built.
             </h2>
             <p className="mt-4 max-w-2xl text-muted-foreground leading-7">
-              These are Helix sample finishes, not a manufacturer catalog. Pick a material, a color, and a design. The photograph and the spec change with the choice.
+              The project stays in the frame. Change the material, the design, or a color, and only that part of the photograph moves.
             </p>
           </Reveal>
           <div className="mt-8">
-            <DesignStudio options={designsFor(service.slug)} />
+            <DesignStudio service={service.slug} />
           </div>
         </div>
       </section>

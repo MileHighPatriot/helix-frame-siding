@@ -1,4 +1,4 @@
-import { Photo } from "@/components/photo";
+import { DesignStage } from "@/components/design-stage";
 import {
   allowanceRates,
   getDesign,
@@ -50,20 +50,23 @@ export function ScopeSheet({
           const design = getDesign(values.designs[slug] ?? "");
           const rate = allowanceRates[slug as ServiceSlug];
           return (
-            <li key={slug} className="grid gap-3 border-t border-border pt-4 sm:grid-cols-[7rem_1fr]">
+            <li key={slug} className="grid gap-4 border-t border-border pt-4">
               {design ? (
-                <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border">
-                  <Photo src={design.image} alt="" sizes="120px" />
-                </div>
+                <DesignStage design={design} alt={design.name} />
               ) : (
-                <div className="aspect-[4/3] rounded-lg border border-dashed border-border" />
+                <div className="aspect-video rounded-xl border border-dashed border-border" />
               )}
               <div>
                 <p className="font-heading text-xl">{service?.name ?? serviceName(slug as ServiceSlug)}</p>
                 {design ? (
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {design.name} · {design.material} · {design.color} · {design.designType}
-                  </p>
+                  <div className="mt-1 space-y-1 text-sm text-muted-foreground">
+                    <p>
+                      {design.name} · {design.material} · {design.color} · {design.designType}
+                    </p>
+                    <p>{design.profile}</p>
+                    <p>Helix: {design.helix}</p>
+                    <p>Partner: {design.partner}</p>
+                  </div>
                 ) : (
                   <p className="mt-1 text-sm text-muted-foreground">Design not chosen yet</p>
                 )}

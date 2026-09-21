@@ -13,6 +13,10 @@ npm run dev -- --hostname 0.0.0.0 --port 43123
 
 Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
+## Design scenes
+
+Each service keeps one finished project in the frame. The controls change that part of the photograph: siding field and gable, deck boards, handrail, and fascia, and the same kind of split for outdoor structures, remodels, additions, and framing. Color tints the masked region. The estimate uses those same controls, and the scope sheet shows the composite with the written spec.
+
 ## Forms
 
 Estimate, permit, and contact requests are checked in the browser and return a reference number on the page. That works on GitHub Pages, which only serves the static site.

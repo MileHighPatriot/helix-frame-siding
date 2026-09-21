@@ -1,76 +1,81 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Photo } from "@/components/photo";
-import type { DesignOption } from "@/lib/catalog";
+import { useState } from "react";
+import { DesignStage } from "@/components/design-stage";
+import type { ServiceSlug } from "@/lib/content-types";
+import { controlsFor, defaultDesignId, normalizeSelection, parseSelection, resolveDesign, selectionId } from "@/lib/scenes";
 import { cn } from "cn";
 
-export function DesignStudio({ options }: { options: DesignOption[] }) {
-  const materials = unique(options.map((option) => option.material));
-  const colors = unique(options.map((option) => option.color));
-  const types = unique(options.map((option) => option.designType));
-  const first = options[0];
-  const [material, setMaterial] = useState(first.material);
-  const [color, setColor] = useState(first.color);
-  const [designType, setDesignType] = useState(first.designType);
-  const [id, setId] = useState(first.id);
+export function DesignStudio({
+  service,
+  value,
+  onChange,
+}: {
+  service: ServiceSlug;
+  value?: string;
+  onChange?: (id: string) => void;
+}) {
+  const [local, setLocal] = useState(() => value ?? defaultDesignId(service));
+  const id = value ?? local;
+  const parsed = parseSelection(id);
+  const selection = parsed?.service === service ? parsed.selection : normalizeSelection(service, {});
+  const design = resolveDesign(service, selection);
+  const controls = controlsFor(service, selection);
 
-  const visible = useMemo(() => {
-    const exact = options.filter(
-      (option) => option.material === material && option.color === color && option.designType === designType,
-    );
-    if (exact.length > 0) return exact;
-    const scored = [...options].sort((a, b) => score(b, material, color, designType) - score(a, material, color, designType));
-    const best = score(scored[0], material, color, designType);
-    return scored.filter((option) => score(option, material, color, designType) === best);
-  }, [options, material, color, designType]);
-  const selected = visible.find((option) => option.id === id) ?? visible[0];
-
-  function choose(option: DesignOption) {
-    setId(option.id);
-    setMaterial(option.material);
-    setColor(option.color);
-    setDesignType(option.designType);
+  function update(key: string, next: string) {
+    const encoded = selectionId(service, normalizeSelection(service, { ...selection, [key]: next }));
+    onChange?.(encoded);
+    if (value === undefined) setLocal(encoded);
   }
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
       <div>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border">
-          <Photo src={selected.image} alt={selected.name} sizes="(min-width: 1024px) 640px, 100vw" />
-        </div>
-        {visible.length > 1 && (
-          <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {visible.map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => choose(option)}
-                aria-pressed={option.id === selected.id}
-                className={cn(
-                  "relative aspect-[4/3] overflow-hidden rounded-lg border",
-                  option.id === selected.id ? "border-copper" : "border-border",
-                )}
-              >
-                <Photo src={option.image} alt="" sizes="160px" />
-              </button>
-            ))}
-          </div>
-        )}
+        <DesignStage design={design} alt={design.name} />
+        <p className="mt-3 text-sm text-muted-foreground">
+          This is one project. Each control changes only its part of the photograph.
+        </p>
       </div>
       <div>
-        <Filter label="Material" values={materials} current={material} onChange={setMaterial} />
-        <Filter label="Color" values={colors} current={color} onChange={setColor} swatches={options} />
-        <Filter label="Design" values={types} current={designType} onChange={setDesignType} />
+        {controls.map((control) => (
+          <fieldset key={control.key} className="mt-4 first:mt-0">
+            <legend className="text-xs tracking-[0.16em] text-muted-foreground uppercase">{control.label}</legend>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {control.options.map((option) => {
+                const on = selection[control.key] === option.id;
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => update(control.key, option.id)}
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm",
+                      on ? "border-copper bg-copper/10" : "border-border",
+                    )}
+                  >
+                    {option.swatch ? (
+                      <span
+                        className="size-3.5 rounded-full border border-white/30"
+                        style={{ backgroundColor: option.swatch }}
+                      />
+                    ) : null}
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+        ))}
         <div className="mt-6 rounded-xl border border-border bg-card p-5">
-          <p className="eyebrow">{selected.material}</p>
-          <h3 className="mt-2 font-heading text-3xl">{selected.name}</h3>
+          <p className="eyebrow">{design.material}</p>
+          <h3 className="mt-2 font-heading text-3xl">{design.name}</h3>
           <dl className="mt-5 space-y-3 text-sm">
-            <Spec term="Profile" value={selected.profile} />
-            <Spec term="Spacing" value={selected.spacing} />
-            <Spec term="Substrate" value={selected.substrate} />
-            <Spec term="Helix does" value={selected.helix} />
-            <Spec term="Partner does" value={selected.partner} />
+            <Spec term="Profile" value={design.profile} />
+            <Spec term="Spacing" value={design.spacing} />
+            <Spec term="Substrate" value={design.substrate} />
+            <Spec term="Helix does" value={design.helix} />
+            <Spec term="Partner does" value={design.partner} />
           </dl>
         </div>
       </div>
@@ -78,58 +83,9 @@ export function DesignStudio({ options }: { options: DesignOption[] }) {
   );
 }
 
-function unique(values: string[]) {
-  return [...new Set(values)];
-}
-
-function score(option: DesignOption, material: string, color: string, designType: string) {
-  return Number(option.material === material) + Number(option.color === color) + Number(option.designType === designType);
-}
-
-function Filter({
-  label,
-  values,
-  current,
-  onChange,
-  swatches,
-}: {
-  label: string;
-  values: string[];
-  current: string;
-  onChange: (value: string) => void;
-  swatches?: DesignOption[];
-}) {
-  return (
-    <fieldset className="mt-4">
-      <legend className="text-xs tracking-[0.16em] text-muted-foreground uppercase">{label}</legend>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {values.map((value) => {
-          const hex = swatches?.find((option) => option.color === value)?.colorHex;
-          const active = value === current;
-          return (
-            <button
-              key={value}
-              type="button"
-              aria-pressed={active}
-              onClick={() => onChange(value)}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm",
-                active ? "border-copper text-copper" : "border-border text-foreground",
-              )}
-            >
-              {hex ? <span className="size-3 rounded-full border border-white/30" style={{ background: hex }} /> : null}
-              {value}
-            </button>
-          );
-        })}
-      </div>
-    </fieldset>
-  );
-}
-
 function Spec({ term, value }: { term: string; value: string }) {
   return (
-    <div className="grid grid-cols-[7rem_1fr] gap-3">
+    <div className="grid grid-cols-[6.5rem_1fr] gap-3">
       <dt className="text-muted-foreground">{term}</dt>
       <dd>{value}</dd>
     </div>

@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Photo } from "@/components/photo";
+import { DesignStudio } from "@/components/design-studio";
 import { AreaField, ChoiceField, FormStatus, SuccessPanel, TextField } from "@/components/forms/controls";
 import { ScopeSheet } from "@/components/forms/scope-sheet";
 import { Button } from "@/components/ui/button";
-import { designsFor, services, type ServiceSlug } from "@/lib/content";
+import { defaultDesignId, services, type ServiceSlug } from "@/lib/content";
 import { acceptLead, estimateSchema, type EstimateInput } from "@/lib/leads";
 import { cn } from "cn";
 
@@ -69,6 +69,7 @@ export function EstimateForm() {
         : [...current.services, slug];
       const designs = { ...current.designs };
       if (selected) delete designs[slug];
+      else designs[slug] = defaultDesignId(slug);
       return { ...current, services: servicesNext, designs };
     });
     setErrors((current) => ({ ...current, services: "", designs: "" }));
@@ -188,36 +189,15 @@ export function EstimateForm() {
         {step === 1 &&
           values.services.map((slug) => {
             const service = services.find((item) => item.slug === slug);
-            const options = designsFor(slug as ServiceSlug);
             return (
-              <fieldset key={slug}>
+              <fieldset key={slug} className="rounded-xl border border-border p-4">
                 <legend className="font-heading text-xl">{service?.name}</legend>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  {options.map((option) => {
-                    const on = values.designs[slug] === option.id;
-                    return (
-                      <button
-                        key={option.id}
-                        type="button"
-                        aria-pressed={on}
-                        onClick={() => set("designs", { ...values.designs, [slug]: option.id })}
-                        className={cn(
-                          "grid grid-cols-[5.5rem_1fr] gap-3 rounded-xl border p-2 text-left",
-                          on ? "border-copper" : "border-border",
-                        )}
-                      >
-                        <span className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                          <Photo src={option.image} alt="" sizes="96px" />
-                        </span>
-                        <span>
-                          <span className="block text-sm font-medium">{option.name}</span>
-                          <span className="mt-1 block text-xs text-muted-foreground">
-                            {option.material} · {option.color}
-                          </span>
-                        </span>
-                      </button>
-                    );
-                  })}
+                <div className="mt-4">
+                  <DesignStudio
+                    service={slug as ServiceSlug}
+                    value={values.designs[slug] ?? defaultDesignId(slug as ServiceSlug)}
+                    onChange={(id) => set("designs", { ...values.designs, [slug]: id })}
+                  />
                 </div>
               </fieldset>
             );
