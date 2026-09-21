@@ -79,7 +79,7 @@ async function composite(design: DesignOption) {
   let frame = context.getImageData(0, 0, width, height);
   for (const wash of design.washes.filter((item) => item.slot === "base")) {
     const mask = await loadMask(mediaSrc(wash.mask), width, height);
-    recolor(frame.data, mask, wash.hex, width, height);
+    recolor(frame.data, mask, wash.hex, wash.strength, width, height);
   }
   context.putImageData(frame, 0, 0);
 
@@ -100,17 +100,24 @@ async function composite(design: DesignOption) {
   frame = context.getImageData(0, 0, width, height);
   for (const wash of design.washes.filter((item) => item.slot === "top")) {
     const mask = await loadMask(mediaSrc(wash.mask), width, height);
-    recolor(frame.data, mask, wash.hex, width, height);
+    recolor(frame.data, mask, wash.hex, wash.strength, width, height);
   }
   context.putImageData(frame, 0, 0);
   return canvas.toDataURL("image/jpeg", 0.9);
 }
 
-function recolor(data: Uint8ClampedArray, mask: Uint8ClampedArray, hex: string, width: number, height: number) {
+function recolor(
+  data: Uint8ClampedArray,
+  mask: Uint8ClampedArray,
+  hex: string,
+  strength: number,
+  width: number,
+  height: number,
+) {
   const tone = parseHex(hex);
+  const pixels = width * height;
   let sum = 0;
   let count = 0;
-  const pixels = width * height;
   for (let index = 0; index < pixels; index += 1) {
     if (mask[index * 4 + 3] < 128) continue;
     const offset = index * 4;
@@ -118,16 +125,25 @@ function recolor(data: Uint8ClampedArray, mask: Uint8ClampedArray, hex: string, 
     count += 1;
   }
   if (!count) return;
-  const mean = sum / count;
+  const mean = Math.max(sum / count, 1);
+  const keep = clamp(strength, 0, 1);
+  const toneLight = 0.2126 * tone[0] + 0.7152 * tone[1] + 0.0722 * tone[2];
+  const grain = keep * 0.18;
   for (let index = 0; index < pixels; index += 1) {
     const alpha = mask[index * 4 + 3] / 255;
-    if (alpha < 0.08) continue;
+    if (alpha < 0.04) continue;
     const offset = index * 4;
     const light = 0.2126 * data[offset] + 0.7152 * data[offset + 1] + 0.0722 * data[offset + 2];
-    const exposure = clamp((light / mean) ** 0.35, 0.9, 1.06);
-    data[offset] = data[offset] * (1 - alpha) + tone[0] * exposure * alpha;
-    data[offset + 1] = data[offset + 1] * (1 - alpha) + tone[1] * exposure * alpha;
-    data[offset + 2] = data[offset + 2] * (1 - alpha) + tone[2] * exposure * alpha;
+    const shade = (light / mean) ** 0.65;
+    const flattened = 1 + (shade - 1) * (0.35 + 0.65 * keep);
+    const exposure = clamp(flattened, 0.32, 1.55);
+    const scale = toneLight / mean;
+    const red = tone[0] * exposure * (1 - grain) + data[offset] * scale * grain;
+    const green = tone[1] * exposure * (1 - grain) + data[offset + 1] * scale * grain;
+    const blue = tone[2] * exposure * (1 - grain) + data[offset + 2] * scale * grain;
+    data[offset] = data[offset] * (1 - alpha) + clamp(red, 0, 255) * alpha;
+    data[offset + 1] = data[offset + 1] * (1 - alpha) + clamp(green, 0, 255) * alpha;
+    data[offset + 2] = data[offset + 2] * (1 - alpha) + clamp(blue, 0, 255) * alpha;
   }
 }
 

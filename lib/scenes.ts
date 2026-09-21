@@ -232,9 +232,9 @@ export function controlsFor(service: ServiceSlug, selection: Bag): SceneControl[
     }));
 }
 
-function wash(file: string, color: string, slot: "base" | "top"): SceneWash {
+function wash(file: string, color: string, slot: "base" | "top", strength: number): SceneWash {
   const tone = palette[color as ColorId];
-  return { mask: maskOf(file), hex: tone.hex, strength: 1, slot };
+  return { mask: maskOf(file), hex: tone.hex, strength, slot };
 }
 
 function sidingStem(selection: Bag) {
@@ -265,27 +265,33 @@ export function getDesign(id: string) {
 function visualFor(service: ServiceSlug, selection: Bag) {
   if (service === "siding") {
     const stem = sidingStem(selection);
+    const fieldKeep = selection.material === "wood" ? 0.72 : 0.32;
     return {
       layers: [{ src: media(`scene-${stem}.png`) }],
       washes: [
-        wash(`${stem}-field.png`, selection.fieldColor, "base"),
-        wash(`${stem}-trim.png`, selection.trimColor, "base"),
+        wash(`${stem}-field.png`, selection.fieldColor, "base", fieldKeep),
+        wash(`${stem}-trim.png`, selection.trimColor, "base", 0.28),
       ],
     };
   }
   if (service === "decking") {
     const stem = `deck-${selection.layout}-${selection.board}`;
-    const railMask = selection.rail === "cable" ? `${stem}-cable.png` : `deck-rail-${selection.rail}.png`;
+    const railFile = selection.rail === "cable" ? `${stem}-cable.png` : `deck-rail-${selection.rail}.png`;
     const layers: SceneLayer[] = [{ src: media(`scene-${stem}.png`) }];
     if (selection.rail !== "cable") {
-      layers.push({ src: media(`scene-deck-rail-${selection.rail}.png`), mask: maskOf(railMask) });
+      layers.push({
+        src: media(`scene-deck-rail-${selection.rail}.png`),
+        mask: maskOf(`deck-rail-${selection.rail}-zone.png`),
+      });
     }
+    const boardKeep = selection.board === "composite" ? 0.4 : 0.78;
+    const railKeep = selection.rail === "wood" ? 0.7 : selection.rail === "cable" ? 0.55 : 0.3;
     return {
       layers,
       washes: [
-        wash(`${stem}-boards.png`, selection.boardColor, "base"),
-        wash(`${stem}-fascia.png`, selection.fasciaColor, "base"),
-        wash(railMask, selection.railColor, "top"),
+        wash(`${stem}-boards.png`, selection.boardColor, "base", boardKeep),
+        wash(`${stem}-fascia.png`, selection.fasciaColor, "base", 0.32),
+        wash(railFile, selection.railColor, "top", railKeep),
       ],
     };
   }
@@ -298,27 +304,27 @@ function visualFor(service: ServiceSlug, selection: Bag) {
       : `outdoor-${selection.structure}-${selection.roof}`;
     return {
       layers: [{ src: media(file) }],
-      washes: [wash(`${stem}-timber.png`, selection.stain, "base")],
+      washes: [wash(`${stem}-timber.png`, selection.stain, "base", 0.82)],
     };
   }
   if (service === "remodels") {
     const stem = `remodel-${selection.beam}-${selection.stair}`;
     return {
       layers: [{ src: media(`scene-${stem}.png`) }],
-      washes: [wash(`${stem}-finish.png`, selection.color, "base")],
+      washes: [wash(`${stem}-finish.png`, selection.color, "base", selection.finish === "stained" ? 0.75 : 0.28)],
     };
   }
   if (service === "additions") {
     const stem = `addition-${selection.stories}-${selection.design}`;
     return {
       layers: [{ src: media(`scene-${stem}.png`) }],
-      washes: [wash(`${stem}-field.png`, selection.color, "base")],
+      washes: [wash(`${stem}-field.png`, selection.color, "base", 0.32)],
     };
   }
   const stem = `framing-${selection.floor}-${selection.beam}-${selection.sheathing}`;
   return {
     layers: [{ src: media(`scene-${stem}.png`) }],
-    washes: [wash(`${stem}-lumber.png`, selection.tone, "base")],
+    washes: [wash(`${stem}-lumber.png`, selection.tone, "base", 0.88)],
   };
 }
 

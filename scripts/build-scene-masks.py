@@ -1,8 +1,8 @@
-"""Build alpha masks for the locked design scenes.
+"""Build a solid alpha mask for every design scene.
 
-A mask is white only where that control's color should land. Vegetation, sky,
-brick, and the ground stay out. The wall, deck, or lumber region is filled
-solid so the color covers the whole surface.
+Each mask is the real surface for that photo: wall, boards, members, or trim.
+Openings, sky, plants, brick, and the ground stay out. Grooves inside a
+surface are filled so a color covers the whole board or course.
 """
 
 from __future__ import annotations
@@ -10,16 +10,19 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 from scipy import ndimage as ndi
 
-SRC = Path("/workspace/public/media")
-OUT = Path("/workspace/public/media/masks")
-PREVIEW = Path("/tmp/scene-mask-previews")
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "public" / "media"
+OUT = SRC / "masks"
+
+WIDTH = 1280
+HEIGHT = 720
 
 
 def load(name: str) -> np.ndarray:
-    return np.asarray(Image.open(SRC / name).convert("RGB")).astype(np.float32)
+    return np.asarray(Image.open(SRC / name).convert("RGB"))
 
 
 def luminance(rgb: np.ndarray) -> np.ndarray:
@@ -32,42 +35,107 @@ def saturation(rgb: np.ndarray) -> np.ndarray:
     return (peak - floor) / np.maximum(peak, 1)
 
 
+def blank() -> np.ndarray:
+    return np.zeros((HEIGHT, WIDTH), dtype=bool)
+
+
+def raster(shapes: list[list[tuple[int, int]]]) -> np.ndarray:
+    mask = blank()
+    image = Image.new("L", (WIDTH, HEIGHT), 0)
+    draw = ImageDraw.Draw(image)
+    for shape in shapes:
+        if len(shape) == 4 and all(isinstance(point, tuple) for point in shape):
+            draw.polygon(shape, fill=1)
+        else:
+            draw.polygon(shape, fill=1)
+    return np.asarray(image, dtype=bool)
+
+
+def rect(x0: int, y0: int, x1: int, y1: int) -> list[tuple[int, int]]:
+    return [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+
+
+def band(start: tuple[int, int], end: tuple[int, int], width: float, outward: int) -> list[tuple[int, int]]:
+    dx = end[0] - start[0]
+    dy = end[1] - start[1]
+    length = max((dx * dx + dy * dy) ** 0.5, 1)
+    if outward < 0:
+        nx, ny = -dy / length, dx / length
+    else:
+        nx, ny = dy / length, -dx / length
+    ox, oy = nx * width, ny * width
+    return [
+        start,
+        end,
+        (int(end[0] + ox), int(end[1] + oy)),
+        (int(start[0] + ox), int(start[1] + oy)),
+    ]
+
+
+def dilate(mask: np.ndarray, pixels: int) -> np.ndarray:
+    if pixels <= 0:
+        return mask
+    return ndi.binary_dilation(mask, iterations=pixels)
+
+
+def erode(mask: np.ndarray, pixels: int) -> np.ndarray:
+    if pixels <= 0:
+        return mask
+    return ndi.binary_erosion(mask, iterations=pixels)
+
+
 def keep_large(mask: np.ndarray, min_size: int) -> np.ndarray:
     labels, _count = ndi.label(mask)
     if labels.max() == 0:
-        return np.zeros(mask.shape, dtype=bool)
+        return blank()
     sizes = np.bincount(labels.ravel())
     keep = sizes >= min_size
     keep[0] = False
     return keep[labels]
 
 
-def largest(mask: np.ndarray, min_size: int = 500) -> np.ndarray:
-    labels, count = ndi.label(mask)
+def fill_small_holes(mask: np.ndarray, max_hole: int) -> np.ndarray:
+    holes = ~mask
+    labels, count = ndi.label(holes)
     if count == 0:
-        return np.zeros(mask.shape, dtype=bool)
+        return mask
     sizes = np.bincount(labels.ravel())
-    sizes[0] = 0
-    winner = int(sizes.argmax())
-    if sizes[winner] < min_size:
-        return np.zeros(mask.shape, dtype=bool)
-    return labels == winner
+    edge = np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))
+    drop = sizes <= max_hole
+    drop[0] = False
+    drop[edge] = False
+    return mask | drop[labels]
 
 
-def sky_mask(rgb: np.ndarray) -> np.ndarray:
-    light = luminance(rgb)
-    sat = saturation(rgb)
-    candidate = (light > 208) & (sat < 0.14)
-    labels, _count = ndi.label(candidate)
-    touching = np.unique(labels[:6])
-    touching = touching[touching > 0]
-    sky = np.isin(labels, touching) if touching.size else np.zeros(light.shape, dtype=bool)
-    return ndi.binary_dilation(sky, iterations=2)
+def vegetation(rgb: np.ndarray) -> np.ndarray:
+    red, green, blue = rgb[:, :, 0].astype(int), rgb[:, :, 1].astype(int), rgb[:, :, 2].astype(int)
+    return (green > red + 12) & (green > blue + 8)
+
+
+def cut_dark(rgb: np.ndarray, region: np.ndarray, limit: int = 68, min_size: int = 180, pad: int = 3) -> np.ndarray:
+    dark = region & (luminance(rgb) < limit)
+    openings = keep_large(dark, min_size)
+    return region & ~dilate(openings, pad)
+
+
+def grow_surface(region: np.ndarray, rgb: np.ndarray) -> np.ndarray:
+    """Fill lap grooves and board gaps that sit inside the surface, not windows."""
+    planted = dilate(vegetation(rgb), 1)
+    opened = cut_dark(rgb, region & ~planted)
+    return fill_small_holes(opened, 2200) & ~planted
+
+
+def feather(mask: np.ndarray) -> np.ndarray:
+    core = erode(mask, 1)
+    alpha = np.zeros(mask.shape, dtype=np.uint8)
+    alpha[mask] = 170
+    alpha[core] = 255
+    return alpha
 
 
 def save_mask(path: Path, mask: np.ndarray) -> None:
-    alpha = mask.astype(np.uint8) * 255
-    rgba = np.zeros((*mask.shape, 4), dtype=np.uint8)
+    alpha = feather(mask)
+    rgba = np.zeros((HEIGHT, WIDTH, 4), dtype=np.uint8)
     rgba[:, :, 0] = 255
     rgba[:, :, 1] = 255
     rgba[:, :, 2] = 255
@@ -80,262 +148,246 @@ def coverage(mask: np.ndarray) -> float:
     return float(mask.mean() * 100)
 
 
-def median_color(rgb: np.ndarray, selector: np.ndarray) -> np.ndarray:
-    chosen = rgb[selector]
-    if chosen.shape[0] < 80:
-        return np.median(rgb.reshape(-1, 3), axis=0)
-    return np.median(chosen, axis=0)
+# The siding house is one camera. Every profile and gable variant shares it.
+GABLE_PEAK = (648, 96)
+GABLE_LEFT = (324, 230)
+GABLE_RIGHT = (988, 230)
+SIDING_WALL = rect(128, 322, 1216, 596)
+SIDING_WINDOWS = [
+    rect(310, 326, 384, 486),
+    rect(388, 326, 462, 486),
+    rect(734, 326, 812, 486),
+    rect(816, 326, 888, 486),
+]
+SIDING_DOOR = rect(1030, 368, 1130, 598)
+SIDING_CORNERS = [rect(108, 322, 152, 596), rect(1170, 322, 1238, 596)]
+SIDING_FASCIA = rect(120, 274, 1230, 320)
 
 
-def chroma_distance(rgb: np.ndarray, median: np.ndarray) -> np.ndarray:
-    light = np.maximum(luminance(rgb)[:, :, None], 1)
-    median_light = max(float(luminance(median.reshape(1, 1, 3))[0, 0]), 1)
-    chroma = rgb / light
-    return np.linalg.norm(chroma - (median / median_light), axis=2)
-
-
-def siding_masks(rgb: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    height, width = rgb.shape[:2]
+def siding_parts(rgb: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    gable = raster([[GABLE_PEAK, GABLE_LEFT, GABLE_RIGHT]])
+    wall = raster([SIDING_WALL])
+    windows = raster(SIDING_WINDOWS)
+    door = raster([SIDING_DOOR])
+    openings = dilate(windows | door, 2)
+    casing = dilate(windows | door, 16) & ~openings & wall
+    corners = raster(SIDING_CORNERS) & wall
+    fascia_box = raster([SIDING_FASCIA])
     light = luminance(rgb)
-    sky = sky_mask(rgb)
-    rows = np.arange(height)[:, None]
-    cols = np.arange(width)[None, :]
-    red, green, blue = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    sample = (rows > height * 0.45) & (rows < height * 0.72) & (cols > width * 0.34) & (cols < width * 0.70)
-    sample = sample & (light > 120) & (light < 210)
-    median = median_color(rgb, sample)
-    distance = chroma_distance(rgb, median)
-    # Shrubs and the tree sit under the last siding course. Cut them before the color grows.
-    ground = rows > int(height * 0.825)
-    plants = ((green > red + 8) & (green > blue + 6)) | ((rows > height * 0.80) & (distance > 0.11) & (light < 150))
-    plants = ndi.binary_dilation(plants, iterations=1)
-    windows = keep_large((light < 92) & (distance > 0.04) & (rows < height * 0.80), 180)
-    windows = ndi.binary_dilation(windows, iterations=2)
-    field = (distance < 0.085) & (light > 108) & (light < 216) & ~sky & ~ground & ~plants & ~windows
-    # Bridge lap grooves and batten shadows, then knock the openings back out.
-    field = ndi.binary_closing(field, structure=np.ones((3, 9), dtype=bool))
-    field = ndi.binary_closing(field, iterations=4)
-    field = field & ~sky & ~ground & ~plants & ~windows
-    field = keep_large(field, 2000)
-    filled = ndi.binary_fill_holes(field)
-    gaps = filled & ~field & (light > 125) & (light < 215) & (distance < 0.12) & ~plants & ~ground & ~sky
-    field = keep_large(field | gaps, 2000)
-    ring = ndi.binary_dilation(windows, iterations=7) & ~ndi.binary_dilation(windows, iterations=2)
-    _ys, xs = np.where(field)
-    corners = np.zeros(field.shape, dtype=bool)
-    eave = np.zeros(field.shape, dtype=bool)
-    if xs.size:
-        left, right = int(xs.min()), int(xs.max())
-        corners = field & ((cols < left + 14) | (cols > right - 14))
-        eave = field & ndi.binary_dilation(sky, iterations=4)
-    trim = (ring | corners | eave) & ~sky & ~ground & ~plants & ~windows
-    trim = keep_large(trim, 40)
-    field = field & ~ndi.binary_dilation(trim, iterations=1)
+    sat = saturation(rgb)
+    fascia = fascia_box & (light > 145) & (sat < 0.2) & ~vegetation(rgb)
+    left_rake = raster([band(GABLE_PEAK, GABLE_LEFT, 36, -1)])
+    right_rake = raster([band(GABLE_PEAK, GABLE_RIGHT, 36, 1)])
+    rake = (left_rake | right_rake) & ~gable & (light > 120) & (light < 230)
+    trim = (casing | corners | fascia | rake) & ~openings & ~vegetation(rgb)
+    field = grow_surface((gable | wall) & ~openings & ~trim, rgb)
+    trim = trim & ~field
     return field, trim
 
 
-def deck_masks(rgb: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    height, width = rgb.shape[:2]
+# Deck camera. The walking surface is one trapezoid on every board and layout.
+DECK_BOARDS = [(340, 348), (980, 344), (1136, 548), (150, 550)]
+DECK_POSTS = [
+    rect(424, 300, 460, 552),
+    rect(638, 300, 676, 552),
+    rect(828, 300, 872, 552),
+]
+DECK_FASCIA = rect(146, 552, 1140, 584)
+DECK_RAIL = [(340, 292), (1000, 288), (1060, 430), (270, 434)]
+
+
+def thin_dark(light: np.ndarray, zone: np.ndarray, level: float = 12) -> np.ndarray:
+    """Dark wires, balusters, and rails. Flat shade and the view through them drop out."""
+    vertical = ndi.grey_closing(light, size=(1, 13)) - light
+    horizontal = ndi.grey_closing(light, size=(13, 1)) - light
+    members = zone & ((vertical > level) | (horizontal > level)) & (light < 185)
+    thick = ndi.binary_opening(members, structure=np.ones((8, 8), dtype=bool))
+    members = members & ~thick
+    return dilate(members, 1) & zone
+
+
+def deck_parts(rgb: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    boards = raster([DECK_BOARDS])
+    posts = raster(DECK_POSTS)
+    fascia = raster([DECK_FASCIA])
+    boards = grow_surface(boards & ~posts & ~fascia, rgb)
+    fascia = fascia & ~vegetation(rgb) & (luminance(rgb) > 110)
+    rail = raster([DECK_RAIL]) & ~boards
+    red = rgb[:, :, 0].astype(int)
+    green = rgb[:, :, 1].astype(int)
+    cables = thin_dark(luminance(rgb), rail, 18)
+    cables = cables & ~dilate(posts, 1) & ~boards & ~fascia & (red < green + 8)
+    return boards, fascia, cables
+
+
+def rail_members(variant: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    zone = (raster([DECK_RAIL]) | raster(DECK_POSTS)) & ~raster([DECK_BOARDS])
+    members = thin_dark(luminance(variant), zone, 14)
+    members = members & ~vegetation(variant)
+    return members, zone
+
+
+# One seed on the new siding. The box keeps the old house, the sky, and the yard out.
+ADDITION_BOX = {
+    "one": (460, 170, 1140, 620),
+    "two": (440, 100, 1180, 640),
+}
+
+def addition_field(rgb: np.ndarray, stories: str) -> np.ndarray:
+    x0, y0, x1, y1 = ADDITION_BOX[stories]
+    region = blank()
+    region[y0:y1, x0:x1] = True
     light = luminance(rgb)
-    rows = np.arange(height)[:, None]
-    cols = np.arange(width)[None, :]
-    red, green, blue = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    plants = (green > red + 8) & (green > blue + 6)
-    sample = (rows > height * 0.56) & (rows < height * 0.70) & (cols > width * 0.40) & (cols < width * 0.64)
-    sample = sample & (light > 155)
-    median = median_color(rgb, sample)
-    distance = chroma_distance(rgb, median)
-    band = (rows > height * 0.50) & (rows < height * 0.83)
-    grown = (distance < 0.04) & band & (light > 140) & ~plants
-    for _step in range(14):
-        grown = ndi.binary_dilation(grown, iterations=1) & (distance < 0.09) & band & (light > 120) & ~plants
-    boards = largest(ndi.binary_closing(grown, iterations=3), 2000)
-    if boards.sum() < 1000:
-        empty = np.zeros(boards.shape, dtype=bool)
-        return empty, empty
-    # Fill the walking surface between the near and far board in each column. Grass stays below that span.
-    present = boards.any(axis=0)
-    index = np.arange(height)[:, None]
-    top = np.argmax(boards, axis=0)
-    bottom_row = height - 1 - np.argmax(boards[::-1], axis=0)
-    span = (index >= top) & (index <= bottom_row) & present
-    boards = boards | (span & (distance < 0.12) & (light > 118) & band & ~plants)
-    boards = largest(ndi.binary_closing(boards, iterations=2), 2000)
-    fascia = np.zeros(boards.shape, dtype=bool)
-    column_bottom = np.full(width, -1)
-    for x in range(width):
-        column = np.where(boards[:, x])[0]
-        if column.size:
-            column_bottom[x] = int(column.max())
-    for x in np.where(column_bottom >= 0)[0]:
-        start = max(0, int(column_bottom[x]) - 11)
-        fascia[start : int(column_bottom[x]) + 1, x] = True
-    fascia = fascia & boards
-    return boards & ~fascia, fascia
+    red = rgb[:, :, 0].astype(int)
+    green = rgb[:, :, 1].astype(int)
+    brick = (red > green + 22) & (light < 150)
+    candidate = region & (light > 96) & (light < 228) & ~brick
+    closed = ndi.binary_closing(candidate, structure=np.ones((17, 1), dtype=bool))
+    wall = blank()
+    for x in range(x0, x1):
+        ys = np.where(closed[:, x])[0]
+        if ys.size < 20:
+            continue
+        start = int(ys[0])
+        prev = int(ys[0])
+        best = (0, 0, 0)
+        for y in list(ys[1:]) + [10**9]:
+            if y > prev + 2:
+                if prev - start > best[2]:
+                    best = (start, prev, prev - start)
+                start = int(y)
+            prev = int(y)
+        if best[2] > 50:
+            wall[best[0] : best[1] + 1, x] = True
+    wall = ndi.binary_dilation(wall, structure=np.ones((1, 201), dtype=bool))
+    wall = wall & region & (light < 228) & ~brick
+    core = ndi.binary_erosion(wall, iterations=4)
+    labels, _count = ndi.label(core)
+    sizes = np.bincount(labels.ravel())
+    sizes[0] = 0
+    if sizes.max():
+        wall = ndi.binary_dilation(labels == int(sizes.argmax()), iterations=4) & region & ~brick
+    rows = np.arange(HEIGHT)[:, None]
+    roof = (light < 110) & (rows < y0 + 150)
+    ground = rows > y1 - 36
+    dark = dilate(keep_large(region & (light < 80), 70), 1)
+    return wall & ~dark & ~roof & ~ground & ~vegetation(rgb)
 
 
-def timber_mask(rgb: np.ndarray) -> np.ndarray:
-    height, width = rgb.shape[:2]
+def framing_lumber(rgb: np.ndarray, open_rgb: np.ndarray | None) -> np.ndarray:
     light = luminance(rgb)
-    sat = saturation(rgb)
-    rows = np.arange(height)[:, None]
-    red, green, blue = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    plants = ((green > red + 6) & (green > blue + 8)) | (rows > height * 0.78)
-    warm = (red > blue + 14) & (light > 45) & (light < 165) & (sat > 0.10) & ~plants
-    sample = warm & (rows > height * 0.22) & (rows < height * 0.62)
-    median = median_color(rgb, sample)
-    distance = chroma_distance(rgb, median)
-    timber = (distance < 0.08) & warm & (rows > height * 0.06) & (rows < height * 0.74)
-    timber = ndi.binary_closing(timber, structure=np.ones((7, 5), dtype=bool))
-    timber = timber & ~plants & (rows < height * 0.76)
-    return keep_large(timber, 200)
-
-
-def addition_mask(rgb: np.ndarray) -> np.ndarray:
-    height, width = rgb.shape[:2]
-    light = luminance(rgb)
-    sat = saturation(rgb)
-    sky = sky_mask(rgb)
-    rows = np.arange(height)[:, None]
-    cols = np.arange(width)[None, :]
-    red, green, _blue = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    brick = (red > green + 12) & (sat > 0.12) & (light < 150)
-    sample = (cols > width * 0.60) & (cols < width * 0.82) & (rows > height * 0.42) & (rows < height * 0.70)
-    sample = sample & (light > 150) & (light < 210) & ~brick & ~sky
-    median = median_color(rgb, sample)
-    distance = chroma_distance(rgb, median)
-    wall_light = float(np.median(light[sample])) if int(sample.sum()) > 50 else 170.0
-    ground = rows > int(height * 0.80)
-    too_bright = light > wall_light + 28
-    windows = keep_large((light < wall_light - 50) & (distance > 0.04) & ~brick, 80)
-    windows = ndi.binary_dilation(windows, iterations=1)
-    field = (distance < 0.055) & (light > wall_light - 45) & (light < wall_light + 22)
-    field = field & ~sky & ~brick & ~ground & ~too_bright & ~windows
-    field = ndi.binary_closing(field, iterations=5)
-    field = largest(field & ~sky & ~brick & ~ground & ~too_bright & ~windows, 2000)
-    filled = ndi.binary_fill_holes(field)
-    gaps = filled & ~field & (light > wall_light - 40) & (light < wall_light + 18) & ~brick & ~sky
-    return (field | gaps) & ~sky & ~brick & ~ground & ~windows
-
-
-def framing_mask(rgb: np.ndarray, open_rgb: np.ndarray | None = None) -> np.ndarray:
-    height, width = rgb.shape[:2]
-    light = luminance(rgb)
-    sky = sky_mask(rgb)
-    rows = np.arange(height)[:, None]
-    cols = np.arange(width)[None, :]
-    red, green, blue = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    # The foreground under the sill is dirt, the same hue as the lumber. Keep it out.
-    dirt = rows > height * 0.70
-    warm = (red > blue + 8) & (light > 75) & (light < 215) & ~sky & ~dirt
-    sample = warm & (rows > height * 0.30) & (rows < height * 0.58) & (cols > width * 0.35) & (cols < width * 0.70)
-    median = median_color(rgb, sample)
-    distance = chroma_distance(rgb, median)
-    brick = (red > green + 8) & (light < 120) & (cols < width * 0.28) & (distance > 0.05)
-    lumber = (distance < 0.065) & warm & ~brick
-    lumber = ndi.binary_dilation(lumber, iterations=1) & (distance < 0.095) & warm & ~brick
-    # Close along studs and along plates without bridging the open bays.
-    lumber = ndi.binary_closing(lumber, structure=np.ones((11, 3), dtype=bool))
-    lumber = ndi.binary_closing(lumber, structure=np.ones((3, 9), dtype=bool))
+    lumber = blank()
+    # Studs sit on a regular layout. Skip a bay that is open sky.
+    for center in range(302, 1120, 54):
+        if light[200:460, center].mean() > 185:
+            continue
+        lumber[168:500, center - 6 : center + 7] = True
+    lumber[150:178, 280:1100] = True
+    lumber[470:505, 280:1120] = True
+    lumber[145:175, 480:980] = True
     if open_rgb is not None:
-        # Sheathing is the part of the wall that is not in the open-stud plate.
-        added = np.abs(rgb - open_rgb).mean(axis=2) > 16
-        added = ndi.binary_closing(added, iterations=2)
-        added = keep_large(added, 200) & ~dirt & ~sky
-        lumber = lumber | added
-    lumber = lumber & ~sky & ~brick & ~dirt
-    return keep_large(lumber, 180)
+        added = np.abs(rgb.astype(int) - open_rgb.astype(int)).mean(axis=2) > 22
+        panels = ndi.binary_closing(added, iterations=2)
+        panels[:145] = False
+        panels[530:] = False
+        panels[:, :250] = False
+        panels = keep_large(panels, 400)
+        opening = keep_large((light < 80) & panels, 500)
+        lumber = lumber | (panels & ~dilate(opening, 2))
+    lumber[545:] = False
+    return lumber & ~vegetation(rgb)
 
 
-def remodel_masks(beam_name: str, stair: str, cache: dict[str, np.ndarray]) -> np.ndarray:
+def outdoor_timber(rgb: np.ndarray) -> np.ndarray:
+    """Posts, beams, and rafters. Brick, windows, roof planes, and the patio stay out."""
+    red = rgb[:, :, 0].astype(int)
+    green = rgb[:, :, 1].astype(int)
+    blue = rgb[:, :, 2].astype(int)
+    wood = (red > 150) & (green > 110) & (blue > 70) & (red > blue + 28)
+    wood[530:] = False
+    wood[:90] = False
+    fraction = wood[160:500].mean(axis=0)
+    columns = fraction > 0.45
+    labels, _count = ndi.label(columns)
+    members = blank()
+    post_span: list[tuple[int, int]] = []
+    for label in range(1, int(labels.max()) + 1):
+        xs = np.where(labels == label)[0]
+        if xs.size < 10 or xs.size > 48:
+            continue
+        left, right = int(xs.min()), int(xs.max())
+        if not 250 <= (left + right) // 2 <= 1050:
+            continue
+        members[150:505, left - 1 : right + 2] = True
+        post_span.append((left, right))
+    if post_span:
+        left = min(span[0] for span in post_span)
+        right = max(span[1] for span in post_span)
+        members[90:210, left:right] |= wood[90:210, left:right]
+    members[510:] = False
+    return members & ~vegetation(rgb)
+
+
+def remodel_finish(beam: str, stair: str, cache: dict[str, np.ndarray]) -> np.ndarray:
     flush = cache["flush-metal"]
     dropped = cache["dropped-metal"]
-    changed = np.abs(dropped - flush).mean(axis=2) > 14
+    changed = np.abs(dropped.astype(int) - flush.astype(int)).mean(axis=2) > 16
     changed = keep_large(changed, 80)
-    beam = ndi.binary_closing(changed, iterations=2)
-    height = beam.shape[0]
-    beam[int(height * 0.34) :] = False
-    # Keep the rows that actually hold the beam, not the whole ceiling.
-    row_frac = beam.mean(axis=1)
+    beam_mask = ndi.binary_closing(changed, iterations=2)
+    beam_mask[int(HEIGHT * 0.28) :] = False
+    row_frac = beam_mask.mean(axis=1)
     if row_frac.max() > 0:
-        strong = row_frac > max(0.08, row_frac.max() * 0.45)
-        beam = beam & strong[:, None]
-        beam = ndi.binary_dilation(beam, iterations=2)
-        beam = ndi.binary_closing(beam, structure=np.ones((3, 31), dtype=bool))
-        beam[int(height * 0.36) :] = False
-    beam = keep_large(beam, 150)
-    finish = beam
+        strong = row_frac > max(0.05, float(row_frac.max()) * 0.4)
+        beam_mask = beam_mask & strong[:, None]
+        beam_mask = dilate(beam_mask, 2)
+        beam_mask = ndi.binary_closing(beam_mask, structure=np.ones((5, 21), dtype=bool))
+        beam_mask[int(HEIGHT * 0.30) :] = False
+    if beam == "dropped":
+        beam_mask = dilate(beam_mask, 6)
+        beam_mask[int(HEIGHT * 0.36) :] = False
+    finish = keep_large(beam_mask, 150)
     if stair == "wood":
-        wood = cache["flush-wood"]
-        metal = cache["flush-metal"]
-        rail = np.abs(wood - metal).mean(axis=2) > 16
-        rail = keep_large(rail, 40)
-        rail = ndi.binary_closing(rail, iterations=2)
-        rail[:, : int(rail.shape[1] * 0.55)] = False
-        rail[: int(rail.shape[0] * 0.12)] = False
+        rail = np.abs(cache["flush-wood"].astype(int) - cache["flush-metal"].astype(int)).mean(axis=2) > 18
+        rail = keep_large(rail, 30)
+        rail[:, : int(WIDTH * 0.58)] = False
+        rail[: int(HEIGHT * 0.18)] = False
+        rail = ndi.binary_closing(rail, structure=np.ones((7, 3), dtype=bool))
         finish = finish | rail
-    return finish
+    return finish & ~vegetation(cache["flush-wood"])
 
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    PREVIEW.mkdir(parents=True, exist_ok=True)
     stats: list[str] = []
 
     for path in sorted(SRC.glob("scene-siding-*.png")):
         stem = path.stem.removeprefix("scene-")
-        rgb = load(path.name)
-        field, trim = siding_masks(rgb)
+        field, trim = siding_parts(load(path.name))
         save_mask(OUT / f"{stem}-field.png", field)
         save_mask(OUT / f"{stem}-trim.png", trim)
         stats.append(f"{stem:32} field {coverage(field):5.1f}%  trim {coverage(trim):5.1f}%")
 
-    references: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-    for layout in ("straight", "picture"):
-        references[layout] = deck_masks(load(f"scene-deck-{layout}-cedar.png"))
-
-    cedar = load("scene-deck-straight-cedar.png")
-    for kind, threshold, bridge in (("wood", 24, 7), ("metal", 24, 5), ("glass", 16, 8)):
-        rail = load(f"scene-deck-rail-{kind}.png")
-        changed = np.abs(rail - cedar).mean(axis=2) > threshold
-        changed = keep_large(changed, 70)
-        solid = ndi.binary_closing(changed, iterations=bridge)
-        height = solid.shape[0]
-        solid[int(height * 0.80) :] = False
-        solid[: int(height * 0.10)] = False
-        # Drop broad areas that are really the house or the deck boards.
-        light = luminance(rail)
-        solid = solid & (light < 165)
-        solid = keep_large(solid, 500)
-        save_mask(OUT / f"deck-rail-{kind}.png", solid)
-        stats.append(f"deck-rail-{kind:24} {coverage(solid):5.1f}%")
+    for kind in ("wood", "metal", "glass"):
+        members, zone = rail_members(load(f"scene-deck-rail-{kind}.png"))
+        save_mask(OUT / f"deck-rail-{kind}.png", members)
+        save_mask(OUT / f"deck-rail-{kind}-zone.png", zone)
+        stats.append(f"deck-rail-{kind:24} members {coverage(members):5.1f}%  zone {coverage(zone):5.1f}%")
 
     for path in sorted(SRC.glob("scene-deck-*.png")):
         if "rail" in path.name:
             continue
         stem = path.stem.removeprefix("scene-")
-        layout = stem.split("-")[1]
-        rgb = load(path.name)
-        boards, fascia = deck_masks(rgb)
-        if coverage(boards) < 6:
-            boards, fascia = references[layout]
-        light = luminance(rgb)
-        rail_zone = np.zeros(light.shape, dtype=bool)
-        for kind in ("wood", "metal"):
-            zone = np.asarray(Image.open(OUT / f"deck-rail-{kind}.png").split()[-1]) > 128
-            rail_zone |= zone
-        cable = rail_zone & (light < 120) & ~ndi.binary_dilation(boards, iterations=2)
-        cable = ndi.binary_dilation(keep_large(cable, 15), iterations=1)
+        boards, fascia, cables = deck_parts(load(path.name))
         save_mask(OUT / f"{stem}-boards.png", boards)
         save_mask(OUT / f"{stem}-fascia.png", fascia)
-        save_mask(OUT / f"{stem}-cable.png", cable)
+        save_mask(OUT / f"{stem}-cable.png", cables)
         stats.append(
-            f"{stem:32} boards {coverage(boards):5.1f}%  fascia {coverage(fascia):5.1f}%  cable {coverage(cable):5.1f}%"
+            f"{stem:32} boards {coverage(boards):5.1f}%  fascia {coverage(fascia):5.1f}%  cable {coverage(cables):5.1f}%"
         )
 
     for path in sorted(SRC.glob("scene-outdoor-*.png")):
         stem = path.stem.removeprefix("scene-")
-        timber = timber_mask(load(path.name))
+        timber = outdoor_timber(load(path.name))
         save_mask(OUT / f"{stem}-timber.png", timber)
         stats.append(f"{stem:32} timber {coverage(timber):5.1f}%")
 
@@ -344,16 +396,17 @@ def main() -> None:
         "dropped-metal": load("scene-remodel-dropped-metal.png"),
         "flush-wood": load("scene-remodel-flush-wood.png"),
     }
-    for beam_name in ("flush", "dropped"):
+    for beam in ("flush", "dropped"):
         for stair in ("wood", "metal"):
-            stem = f"remodel-{beam_name}-{stair}"
-            finish = remodel_masks(beam_name, stair, cache)
+            stem = f"remodel-{beam}-{stair}"
+            finish = remodel_finish(beam, stair, cache)
             save_mask(OUT / f"{stem}-finish.png", finish)
             stats.append(f"{stem:32} finish {coverage(finish):5.1f}%")
 
     for path in sorted(SRC.glob("scene-addition-*.png")):
         stem = path.stem.removeprefix("scene-")
-        field = addition_mask(load(path.name))
+        stories = "two" if "-two-" in stem else "one"
+        field = addition_field(load(path.name), stories)
         save_mask(OUT / f"{stem}-field.png", field)
         stats.append(f"{stem:32} field {coverage(field):5.1f}%")
 
@@ -362,7 +415,7 @@ def main() -> None:
         open_rgb = None
         if stem.endswith("-sheathed"):
             open_rgb = load(path.name.replace("-sheathed.png", "-open.png"))
-        lumber = framing_mask(load(path.name), open_rgb)
+        lumber = framing_lumber(load(path.name), open_rgb)
         save_mask(OUT / f"{stem}-lumber.png", lumber)
         stats.append(f"{stem:32} lumber {coverage(lumber):5.1f}%")
 
