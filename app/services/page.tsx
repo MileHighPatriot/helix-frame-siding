@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
-import { StructurePlate } from "@/components/structure-plate";
-import { services } from "@/lib/content";
+import { Photo } from "@/components/photo";
+import { servicePhotos, services } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -32,8 +32,8 @@ export default function ServicesPage() {
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{service.summary}</p>
                 <p className="mt-4 text-sm text-copper">Open the scope</p>
               </div>
-              <div className="min-h-40 border-t border-border md:border-t-0 md:border-l">
-                <StructurePlate kind={service.plate} title={service.name} />
+              <div className="relative min-h-48 border-t border-border md:border-t-0 md:border-l">
+                <Photo src={servicePhotos[service.slug]} alt="" />
               </div>
             </Link>
           </Reveal>

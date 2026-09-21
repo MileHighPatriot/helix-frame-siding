@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BeforeAfter } from "@/components/before-after";
 import { BlueprintViewer } from "@/components/blueprint-viewer";
-import { blueprints, getBlueprint, getProject } from "@/lib/content";
+import { blueprintComparisons, blueprints, getBlueprint, getProject } from "@/lib/content";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -39,6 +40,19 @@ export default async function BlueprintPage({ params }: Props) {
       <div className="mt-8">
         <BlueprintViewer kind={sheet.kind} title={`${sheet.sheet} ${sheet.title}`} notes={sheet.notes} />
       </div>
+      {blueprintComparisons[sheet.slug] && (
+        <div className="mt-10">
+          <h2 className="font-heading text-3xl">Before and after</h2>
+          <div className="mt-5">
+            <BeforeAfter
+              before={blueprintComparisons[sheet.slug].before}
+              after={blueprintComparisons[sheet.slug].after}
+              caption={blueprintComparisons[sheet.slug].caption}
+              alt={sheet.title}
+            />
+          </div>
+        </div>
+      )}
       <div className="mt-6 flex flex-wrap gap-4 text-sm">
         <Link href="/blueprints" className="text-copper">
           All sheets

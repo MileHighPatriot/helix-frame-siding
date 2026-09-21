@@ -1,7 +1,8 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { StructurePlate } from "@/components/structure-plate";
+import { Photo } from "@/components/photo";
+import { heroPhoto } from "@/lib/content";
 import { cn } from "cn";
 
 const lines = ["Frame the", "structure.", "Finish the", "skin."];
@@ -10,7 +11,7 @@ export function HomeHero() {
   return (
     <section className="relative overflow-hidden border-b border-border">
       <div className="grid-fade pointer-events-none absolute inset-0" />
-      <div className="relative mx-auto grid max-w-7xl items-end gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-[1fr_1.05fr]">
         <div>
           <p className="motion-rise eyebrow">Denver · Front Range</p>
           <h1 className="mt-4 max-w-3xl font-heading text-5xl leading-[0.95] tracking-tight md:text-7xl">
@@ -50,42 +51,25 @@ export function HomeHero() {
             </Link>
           </div>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-          <article
-            className="motion-right overflow-hidden rounded-xl border border-border bg-card"
-            style={{ "--motion-delay": "0.15s" } as CSSProperties}
-          >
-            <div className="aspect-[16/9]">
-              <StructurePlate kind="frame" title="Framing diagram" />
+        <figure className="motion-right overflow-hidden rounded-xl border border-border" style={{ "--motion-delay": "0.12s" } as CSSProperties}>
+          <div className="relative aspect-[16/10]">
+            <Photo
+              src={heroPhoto}
+              alt="A Denver bungalow with a new fiber-cement addition and a tied-in roof"
+              priority
+              sizes="(min-width: 1024px) 640px, 100vw"
+            />
+          </div>
+          <figcaption className="flex items-end justify-between gap-3 p-4">
+            <div>
+              <p className="eyebrow">Highlands</p>
+              <p className="mt-2 font-heading text-xl">The frame and the skin, on one house.</p>
             </div>
-            <div className="flex items-end justify-between gap-3 p-4">
-              <div>
-                <p className="eyebrow">Framing</p>
-                <p className="mt-2 font-heading text-xl">Walls, floors, roofs, beams.</p>
-              </div>
-              <Link href="/services/framing" className="text-sm text-copper">
-                Scope
-              </Link>
-            </div>
-          </article>
-          <article
-            className="motion-right overflow-hidden rounded-xl border border-border bg-card"
-            style={{ "--motion-delay": "0.28s" } as CSSProperties}
-          >
-            <div className="aspect-[16/9]">
-              <StructurePlate kind="siding" title="Siding diagram" />
-            </div>
-            <div className="flex items-end justify-between gap-3 p-4">
-              <div>
-                <p className="eyebrow">Siding</p>
-                <p className="mt-2 font-heading text-xl">Rainscreen, lap, batten.</p>
-              </div>
-              <Link href="/services/siding" className="text-sm text-copper">
-                Scope
-              </Link>
-            </div>
-          </article>
-        </div>
+            <Link href="/work" className="text-sm text-copper">
+              See the work
+            </Link>
+          </figcaption>
+        </figure>
       </div>
     </section>
   );

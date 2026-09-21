@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { StructurePlate } from "@/components/structure-plate";
-import { serviceName, type Project } from "@/lib/content";
+import { Photo } from "@/components/photo";
+import { projectPhotos, serviceName, type Project } from "@/lib/content";
 
 export function ProjectCard({ project }: { project: Project }) {
   return (
@@ -8,9 +8,9 @@ export function ProjectCard({ project }: { project: Project }) {
       href={`/work/${project.slug}`}
       className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-copper/50"
     >
-      <div className="aspect-[16/10] overflow-hidden">
-        <div className="h-full transition-transform duration-700 group-hover:scale-[1.03]">
-          <StructurePlate kind={project.plate} title={project.title} />
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.03]">
+          <Photo src={projectPhotos[project.slug]} alt="" sizes="(min-width: 768px) 360px, 100vw" />
         </div>
       </div>
       <div className="flex flex-1 flex-col p-4">

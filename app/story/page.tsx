@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Photo } from "@/components/photo";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { buttonVariants } from "@/components/ui/button";
@@ -17,22 +18,28 @@ export default function StoryPage() {
       <PageHero
         kicker="Story"
         title="A framing crew that stayed to close the walls."
-        lede="Helix is not a general contractor that happens to own a nail gun. The company still self-performs the frame and the siding, and it hires the other trades the way a lead carpenter hires a specialist: on purpose, on a schedule."
+        lede="Helix is not a general contractor that happens to own a nail gun. The company still self-performs the frame and the siding, and it hires the other trades the way a lead carpenter hires a specialist: on purpose, on a schedule. The shop, the crew, and the bench all grew from jobs that went wrong when someone else closed the walls."
       />
-      <section className="mx-auto max-w-3xl px-5 py-14 md:px-8">
-        <ol className="relative space-y-10 border-l border-border pl-8">
+      <section className="mx-auto max-w-5xl px-5 py-14 md:px-8">
+        <ol className="space-y-16">
           {chapters.map((chapter, index) => (
-            <Reveal key={chapter.year} delay={index * 0.05}>
-              <li>
-                <span className="absolute -left-1.5 mt-1 size-3 rounded-full bg-copper" />
-                <p className="font-heading text-copper">{chapter.year}</p>
-                <h2 className="mt-2 font-heading text-3xl">{chapter.title}</h2>
-                <p className="mt-3 leading-7 text-muted-foreground">{chapter.copy}</p>
+            <Reveal key={chapter.year} delay={index * 0.04}>
+              <li className="grid items-center gap-6 md:grid-cols-2">
+                <div className={index % 2 === 1 ? "md:order-2" : undefined}>
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
+                    <Photo src={chapter.image} alt={chapter.title} />
+                  </div>
+                </div>
+                <div>
+                  <p className="font-heading text-copper">{chapter.year}</p>
+                  <h2 className="mt-2 font-heading text-3xl">{chapter.title}</h2>
+                  <p className="mt-4 leading-7 text-muted-foreground">{chapter.copy}</p>
+                </div>
               </li>
             </Reveal>
           ))}
         </ol>
-        <div className="mt-12 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-16 flex flex-col gap-3 sm:flex-row">
           <Link href="/team" className={cn(buttonVariants(), "h-11 px-5")}>
             Meet the crew
           </Link>

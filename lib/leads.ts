@@ -8,17 +8,36 @@ const email = z
 const phone = z.string().trim().min(7, "Enter a phone number.");
 const person = z.string().trim().min(2, "Enter your name.");
 
-export const estimateSchema = z.object({
-  projectType: z.string().min(1, "Choose a project type."),
-  address: z.string().trim().min(4, "Enter the job address."),
-  city: z.string().trim().min(2, "Enter the city."),
-  timeline: z.string().min(1, "Choose a timeline."),
-  budget: z.string().min(1, "Choose a budget range."),
-  notes: z.string().trim().min(12, "Describe the work in a sentence or two."),
-  name: person,
-  email,
-  phone,
-});
+export const estimateSchema = z
+  .object({
+    services: z.array(z.string()).min(1, "Choose at least one service."),
+    designs: z.record(z.string(), z.string()),
+    area: z.string().trim().min(1, "Enter a size."),
+    stories: z.string().min(1, "Choose how many stories."),
+    occupied: z.string().min(1, "Tell us if anyone will be in the house."),
+    access: z.string().min(1, "Choose the site access."),
+    hoa: z.string().min(1, "Tell us about an HOA or design review."),
+    address: z.string().trim().min(4, "Enter the job address."),
+    city: z.string().trim().min(2, "Enter the city."),
+    timeline: z.string().min(1, "Choose a timeline."),
+    budget: z.string().min(1, "Choose a budget range."),
+    notes: z.string(),
+    name: person,
+    email,
+    phone,
+  })
+  .superRefine((data, ctx) => {
+    for (const service of data.services) {
+      if (!data.designs[service]) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["designs"],
+          message: "Choose a design for each service.",
+        });
+        break;
+      }
+    }
+  });
 
 export const permitSchema = z.object({
   jurisdiction: z.string().min(1, "Choose a jurisdiction."),

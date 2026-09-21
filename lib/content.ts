@@ -1,3 +1,7 @@
+import type { ServiceSlug } from "@/lib/content-types";
+
+export type { ServiceSlug };
+
 export const company = {
   name: "Helix Frame & Siding",
   short: "Helix",
@@ -58,14 +62,6 @@ export const processSteps = [
     copy: "A walk with the owner. Open items get a date, not a shrug.",
   },
 ] as const;
-
-export type ServiceSlug =
-  | "framing"
-  | "siding"
-  | "decking"
-  | "outdoor-structures"
-  | "remodels"
-  | "additions";
 
 export type Service = {
   slug: ServiceSlug;
@@ -526,109 +522,24 @@ export const blueprints: Blueprint[] = [
   },
 ];
 
-export const chapters = [
-  {
-    year: "2011",
-    title: "A bay in Globeville",
-    copy: "Lena Hart and two framers rented a bay off Washington Street and took wall packages other crews did not want. The name Helix came from the way a stair opening twists through a floor: a simple shape that has to be exact.",
-  },
-  {
-    year: "2014",
-    title: "Whole houses, not just walls",
-    copy: "The first full custom frame was a Wheat Ridge bungalow rebuild. Owners started asking Helix to stay through the roof instead of handing the shell to whoever was free.",
-  },
-  {
-    year: "2017",
-    title: "The envelope crew",
-    copy: "After three jobs where the siding crew missed the flashing we had framed for, Helix hired an envelope lead and started closing the walls we had just stood up.",
-  },
-  {
-    year: "2020",
-    title: "A bench of trades",
-    copy: "Remodels made it obvious that a framer who will not call the plumber is a delay. Helix formalized a trade bench: people we schedule, not a list we hand to the owner.",
-  },
-  {
-    year: "2024",
-    title: "Decatur Street",
-    copy: "The shop moved to a bay in the Highlands, with an estimator and a coordinator on staff. Framing and siding stayed in house. Everything else still runs through partners who answer to our schedule.",
-  },
-];
-
-export const team = [
-  {
-    name: "Lena Hart",
-    role: "Principal",
-    since: "2011",
-    bio: "Lena still walks every job before a number goes out. She ran the Globeville crew, wrote the first trade agreements, and keeps the company on framing and siding instead of drifting into a general free-for-all.",
-  },
-  {
-    name: "Marcus Hale",
-    role: "Lead framer",
-    since: "2013",
-    bio: "Marcus layouts additions and beam openings. He is the person who decides where the shore goes before a bearing wall comes out, and he still cuts stairs himself on the tight ones.",
-  },
-  {
-    name: "Priya Shah",
-    role: "Envelope lead",
-    since: "2017",
-    bio: "Priya built the siding standard: story poles, rainscreen gaps, and a photo of every window pan before the lap covers it. She runs the Highlands reclads and the mountain board-and-batten work.",
-  },
-  {
-    name: "Evan Brooks",
-    role: "Project coordinator",
-    since: "2021",
-    bio: "Evan keeps the trade bench on a single calendar. If the roofer, the electrician, and the inspector are supposed to share a morning, he is the one who makes that true.",
-  },
-  {
-    name: "Sofia Alvarez",
-    role: "Estimator",
-    since: "2022",
-    bio: "Sofia turns a walkthrough into a scope an owner can read. She prices framing and siding in house and carries allowances for the partners Helix will schedule.",
-  },
-];
-
-export const trades = [
-  {
-    name: "Northline Electric",
-    craft: "Electrical",
-    owns: "Service upgrades, new circuits in additions, and temporary power for the frame.",
-  },
-  {
-    name: "Front Range Pipe",
-    craft: "Plumbing",
-    owns: "Relocated stacks, new baths in additions, and the underslab work before we frame.",
-  },
-  {
-    name: "Ridgeline Roofing",
-    craft: "Roofing",
-    owns: "Dry-in on additions, valley tie-ins, and the metal roofs on pavilions.",
-  },
-  {
-    name: "Platte Form Concrete",
-    craft: "Concrete",
-    owns: "Footings, slabs for garages and ADUs, and the piers under freestanding decks.",
-  },
-  {
-    name: "Clear Creek Mechanical",
-    craft: "HVAC",
-    owns: "Duct extensions, mini-splits in studios, and the equipment that has to land before drywall.",
-  },
-  {
-    name: "Thermal Bay",
-    craft: "Insulation",
-    owns: "Cavity and continuous insulation once the envelope is inspected.",
-  },
-  {
-    name: "Glassline Windows",
-    craft: "Windows and glazing",
-    owns: "Window packages we frame for, set on the pans Priya's crew builds.",
-  },
-  {
-    name: "Interior Plane",
-    craft: "Drywall",
-    owns: "The close-in after our punch on the frame, especially flush beam openings.",
-  },
-];
+export {
+  chapters,
+  team,
+  trades,
+  designs,
+  heroPhoto,
+  servicePhotos,
+  projectPhotos,
+  serviceComparisons,
+  blueprintComparisons,
+  designsFor,
+  getDesign,
+  getTrade,
+  getTradeByName,
+  allowanceRates,
+  serviceTrades,
+} from "./catalog";
+export type { Comparison, DesignOption } from "./catalog";
 
 export const reviews = [
   {

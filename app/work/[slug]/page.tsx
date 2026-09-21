@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Photo } from "@/components/photo";
 import { Reveal } from "@/components/reveal";
-import { StructurePlate } from "@/components/structure-plate";
-import { getProject, projects, serviceName } from "@/lib/content";
+import { getProject, getTradeByName, projectPhotos, projects, serviceName } from "@/lib/content";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -45,8 +45,8 @@ export default async function ProjectPage({ params }: Props) {
               ))}
             </div>
           </Reveal>
-          <div className="overflow-hidden rounded-xl border border-border">
-            <StructurePlate kind={project.plate} title={project.title} />
+          <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
+            <Photo src={projectPhotos[project.slug]} alt={project.title} priority />
           </div>
         </div>
       </section>
@@ -74,11 +74,20 @@ export default async function ProjectPage({ params }: Props) {
         <div>
           <h2 className="font-heading text-3xl">Trades on the job</h2>
           <ul className="mt-4 space-y-2">
-            {project.trades.map((trade) => (
-              <li key={trade} className="rounded-lg border border-border px-4 py-3 text-sm">
-                {trade}
-              </li>
-            ))}
+            {project.trades.map((trade) => {
+              const partner = getTradeByName(trade);
+              return (
+                <li key={trade} className="rounded-lg border border-border px-4 py-3 text-sm">
+                  {partner ? (
+                    <Link href={`/trades/${partner.slug}`} className="text-copper">
+                      {trade}
+                    </Link>
+                  ) : (
+                    trade
+                  )}
+                </li>
+              );
+            })}
           </ul>
           <h2 className="mt-10 font-heading text-3xl">Outcome</h2>
           <p className="mt-4 leading-7 text-muted-foreground">{project.outcome}</p>

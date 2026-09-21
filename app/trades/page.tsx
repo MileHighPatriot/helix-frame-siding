@@ -17,17 +17,22 @@ export default function TradesPage() {
       <PageHero
         kicker="Trade network"
         title="We contract the trades. You still call Helix."
-        lede="Helix does not hand you a list and leave. Electrical, plumbing, roofing, concrete, HVAC, insulation, windows, and drywall are companies we already schedule. They own their license and their work. We own the sequence."
+        lede="Helix does not hand you a list and leave. Electrical, plumbing, roofing, concrete, HVAC, insulation, windows, and drywall are companies we already schedule. They work Denver and south of Denver. They own their license and their work. We own the sequence."
       />
       <section className="mx-auto max-w-7xl px-5 py-14 md:px-8">
         <div className="grid gap-4 md:grid-cols-2">
           {trades.map((trade, index) => (
-            <Reveal key={trade.name} delay={index * 0.04}>
-              <article className="rounded-xl border border-border bg-card p-5">
+            <Reveal key={trade.slug} delay={index * 0.04}>
+              <Link
+                href={`/trades/${trade.slug}`}
+                className="block h-full rounded-xl border border-border bg-card p-5 transition-colors hover:border-copper/50"
+              >
                 <p className="eyebrow">{trade.craft}</p>
                 <h2 className="mt-3 font-heading text-2xl">{trade.name}</h2>
+                <p className="mt-2 text-sm text-copper">{trade.area}</p>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{trade.owns}</p>
-              </article>
+                <p className="mt-4 text-sm text-copper">Open the company</p>
+              </Link>
             </Reveal>
           ))}
         </div>

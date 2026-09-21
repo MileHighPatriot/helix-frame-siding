@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BeforeAfter } from "@/components/before-after";
+import { DesignStudio } from "@/components/design-studio";
+import { Photo } from "@/components/photo";
 import { ProjectCard } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
-import { StructurePlate } from "@/components/structure-plate";
 import { buttonVariants } from "@/components/ui/button";
-import { getService, projectsForService, services } from "@/lib/content";
+import { designsFor, getService, projectsForService, serviceComparisons, servicePhotos, services } from "@/lib/content";
 import { cn } from "cn";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -39,8 +41,35 @@ export default async function ServicePage({ params }: Props) {
               Estimate this scope
             </Link>
           </Reveal>
-          <div className="overflow-hidden rounded-xl border border-border">
-            <StructurePlate kind={service.plate} title={service.name} />
+          <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
+            <Photo src={servicePhotos[service.slug]} alt={service.name} priority />
+          </div>
+        </div>
+      </section>
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-7xl px-5 py-14 md:px-8">
+          <h2 className="font-heading text-3xl">Before and after</h2>
+          <div className="mt-6">
+            <BeforeAfter
+              before={serviceComparisons[service.slug].before}
+              after={serviceComparisons[service.slug].after}
+              caption={serviceComparisons[service.slug].caption}
+              alt={service.name}
+            />
+          </div>
+        </div>
+      </section>
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-7xl px-5 py-14 md:px-8">
+          <p className="eyebrow">Design options</p>
+          <h2 className="mt-3 max-w-2xl font-heading text-4xl tracking-tight">
+            Materials, colors, and the way the piece is built.
+          </h2>
+          <p className="mt-4 max-w-2xl text-muted-foreground leading-7">
+            These are Helix sample finishes, not a manufacturer catalog. Pick a material, a color, and a design. The photograph and the spec change with the choice.
+          </p>
+          <div className="mt-8">
+            <DesignStudio options={designsFor(service.slug)} />
           </div>
         </div>
       </section>

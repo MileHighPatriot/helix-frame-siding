@@ -2,12 +2,13 @@ import Link from "next/link";
 import { HomeHero } from "@/components/home-hero";
 import { ProjectCard } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
-import { StructurePlate } from "@/components/structure-plate";
+import { Photo } from "@/components/photo";
 import { buttonVariants } from "@/components/ui/button";
 import {
   processSteps,
   projects,
   reviews,
+  servicePhotos,
   services,
   stats,
   trades,
@@ -65,8 +66,8 @@ export default function HomePage() {
                   See the sequence
                 </Link>
               </div>
-              <div className="overflow-hidden rounded-xl border border-border">
-                <StructurePlate kind={service.plate} title={`${service.name} diagram`} />
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
+                <Photo src={servicePhotos[service.slug]} alt={service.name} />
               </div>
             </article>
           </Reveal>
