@@ -5,6 +5,7 @@ const pages = process.env.GITHUB_PAGES === "1";
 const basePath = pages ? "/helix-frame-siding" : "";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["127.0.0.1"],
   output: pages ? "export" : undefined,
   basePath,
   assetPrefix: pages ? "/helix-frame-siding/" : undefined,

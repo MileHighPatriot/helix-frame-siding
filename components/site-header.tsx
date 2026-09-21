@@ -32,7 +32,7 @@ export function SiteHeader() {
         "sticky top-0 z-40 border-b transition-[background-color,height,backdrop-filter] duration-300",
         compact
           ? "border-border bg-background/90 backdrop-blur-md"
-          : "border-transparent bg-background/40"
+          : "border-transparent bg-transparent"
       )}
     >
       <div

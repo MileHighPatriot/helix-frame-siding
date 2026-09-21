@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { EstimateForm } from "@/components/forms/estimate-form";
 import { PageHero } from "@/components/page-hero";
+import { Reveal } from "@/components/reveal";
 
 export const metadata: Metadata = {
   title: "Estimates",
@@ -16,7 +17,7 @@ export default function EstimatesPage() {
         lede="Pick the work, the material, and the size. The sheet that comes back names what Helix self-performs, which partners are carried, and an allowance range. Sofia still walks the site before that range becomes a bid."
       />
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-14 lg:grid-cols-[0.7fr_1.3fr] md:px-8">
-        <div className="space-y-4 text-sm leading-6 text-muted-foreground">
+        <Reveal immediate className="space-y-4 text-sm leading-6 text-muted-foreground">
           <p>Allowances move with the square footage you enter. They are not a contract price.</p>
           <p>You will get a reference number on this page as soon as the request is valid.</p>
           <ol className="space-y-2 border-l border-border pl-4">
@@ -27,7 +28,7 @@ export default function EstimatesPage() {
             <li>Contact</li>
             <li>Review and send</li>
           </ol>
-        </div>
+        </Reveal>
         <div className="rounded-xl border border-border bg-card p-5 md:p-7">
           <EstimateForm />
         </div>

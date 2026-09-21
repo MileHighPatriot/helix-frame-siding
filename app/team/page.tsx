@@ -21,7 +21,7 @@ export default function TeamPage() {
         {team.map((person, index) => (
           <Reveal key={person.name} delay={index * 0.04}>
             <article className="h-full overflow-hidden rounded-xl border border-border bg-card">
-              <div className="relative aspect-[3/4]">
+              <div className="frame-clip relative aspect-[3/4]">
                 <Photo src={person.image} alt={person.name} sizes="(min-width: 1280px) 360px, (min-width: 640px) 50vw, 100vw" />
               </div>
               <div className="p-5">

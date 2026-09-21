@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/forms/contact-form";
 import { PageHero } from "@/components/page-hero";
+import { Reveal } from "@/components/reveal";
 import { company } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export default function ContactPage() {
         lede="Call for a schedule question. Use the form if you want a person to read a note before they ring you back. Estimates and permits have their own requests."
       />
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-2 md:px-8">
-        <div className="space-y-6">
+        <Reveal immediate className="space-y-6">
           <div>
             <p className="eyebrow">Phone</p>
             <a className="mt-2 block font-heading text-3xl" href={company.phoneHref}>
@@ -44,10 +45,10 @@ export default function ContactPage() {
             <p className="eyebrow">Area</p>
             <p className="mt-2 text-muted-foreground">{company.area}</p>
           </div>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-5 md:p-7">
+        </Reveal>
+        <Reveal immediate delay={0.08} className="rounded-xl border border-border bg-card p-5 md:p-7">
           <ContactForm />
-        </div>
+        </Reveal>
       </section>
     </>
   );

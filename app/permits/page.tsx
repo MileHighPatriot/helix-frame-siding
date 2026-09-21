@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PermitForm } from "@/components/forms/permit-form";
 import { PageHero } from "@/components/page-hero";
+import { Reveal } from "@/components/reveal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { jurisdictions, permitSplit } from "@/lib/content";
 
@@ -18,6 +19,7 @@ export default function PermitsPage() {
         lede="Helix prepares building-permit sets for the frame, the envelope, decks, and additions we build. Mechanical permits stay with the licensed trade. The owner signs what the jurisdiction will not take from a contractor alone."
       />
       <section className="mx-auto grid max-w-7xl gap-8 px-5 py-14 md:grid-cols-2 md:px-8">
+        <Reveal>
         <article className="rounded-xl border border-border p-6">
           <h2 className="font-heading text-3xl">Helix pulls</h2>
           <ul className="mt-4 space-y-3">
@@ -28,6 +30,8 @@ export default function PermitsPage() {
             ))}
           </ul>
         </article>
+        </Reveal>
+        <Reveal delay={0.06}>
         <article className="rounded-xl border border-border p-6">
           <h2 className="font-heading text-3xl">You still sign</h2>
           <ul className="mt-4 space-y-3">
@@ -38,6 +42,7 @@ export default function PermitsPage() {
             ))}
           </ul>
         </article>
+        </Reveal>
       </section>
       <section className="mx-auto max-w-7xl px-5 pb-6 md:px-8">
         <h2 className="font-heading text-3xl">Front Range checklist</h2>

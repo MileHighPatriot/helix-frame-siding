@@ -156,37 +156,87 @@
   animation: helix-marquee 42s linear infinite;
 }
 
+.frame-clip,
+.motion-clip,
+.ken-burns {
+  transform: none;
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .motion-rise,
-  .motion-left,
-  .motion-right,
-  .motion-step {
-    animation-duration: 0.7s;
+  .motion-rise[data-inview="true"],
+  .motion-left[data-inview="true"],
+  .motion-right[data-inview="true"] {
+    animation-duration: 0.85s;
     animation-delay: var(--motion-delay, 0s);
     animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
     animation-fill-mode: both;
   }
 
-  .motion-rise {
+  .motion-rise[data-inview="true"] {
     animation-name: helix-rise;
   }
 
-  .motion-left {
+  .motion-left[data-inview="true"] {
     animation-name: helix-from-left;
   }
 
-  .motion-right {
+  .motion-right[data-inview="true"] {
     animation-name: helix-from-right;
   }
 
   .motion-step {
     animation-duration: 0.35s;
+    animation-delay: var(--motion-delay, 0s);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: both;
     animation-name: helix-step;
   }
 
-  .motion-draw {
+  .motion-draw[data-inview="true"] {
     stroke-dasharray: 520;
-    animation: helix-draw 1.2s ease-in-out 0.35s both;
+    animation: helix-draw 1.35s ease-in-out 0.4s both;
+  }
+
+  .motion-clip[data-inview="true"] {
+    animation: helix-clip 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--motion-delay, 0s);
+  }
+
+  [data-inview="true"] .frame-clip {
+    animation: helix-clip-quiet 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--motion-delay, 0s);
+  }
+
+  .ken-burns {
+    animation: helix-ken 26s ease-out both;
+  }
+
+  .project-walk.is-live {
+    height: 220vh;
+  }
+
+  .project-walk.is-live .project-walk-pin {
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100svh;
+    align-items: center;
+  }
+
+  .project-walk.is-live .walk-stage {
+    position: relative;
+    height: min(46vh, 520px);
+  }
+
+  @media (min-width: 1024px) {
+    .project-walk.is-live .walk-stage {
+      height: min(68vh, 720px);
+    }
+  }
+
+  .project-walk.is-live .walk-frame {
+    position: absolute;
+    inset: 0;
   }
 }
 
@@ -208,7 +258,7 @@
 @keyframes helix-rise {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(var(--motion-distance, 12px));
   }
   to {
     opacity: 1;
@@ -219,7 +269,7 @@
 @keyframes helix-from-left {
   from {
     opacity: 0;
-    transform: translateX(-36px);
+    transform: translateX(-20px);
   }
   to {
     opacity: 1;
@@ -230,11 +280,42 @@
 @keyframes helix-from-right {
   from {
     opacity: 0;
-    transform: translateX(36px);
+    transform: translateX(20px);
   }
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes helix-clip {
+  from {
+    clip-path: inset(16% 0 0 0);
+    transform: translateY(24px) scale(1.045);
+  }
+  to {
+    clip-path: inset(0);
+    transform: none;
+  }
+}
+
+@keyframes helix-clip-quiet {
+  from {
+    clip-path: inset(8% 0 0 0);
+    transform: translateY(12px);
+  }
+  to {
+    clip-path: inset(0);
+    transform: none;
+  }
+}
+
+@keyframes helix-ken {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
   }
 }
 

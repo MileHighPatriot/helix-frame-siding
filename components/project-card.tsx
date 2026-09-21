@@ -8,7 +8,7 @@ export function ProjectCard({ project }: { project: Project }) {
       href={`/work/${project.slug}`}
       className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-copper/50"
     >
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="frame-clip relative aspect-[16/10] overflow-hidden">
         <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.03]">
           <Photo src={projectPhotos[project.slug]} alt="" sizes="(min-width: 768px) 360px, 100vw" />
         </div>

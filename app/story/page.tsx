@@ -26,7 +26,7 @@ export default function StoryPage() {
             <Reveal key={chapter.year} delay={index * 0.04}>
               <li className="grid items-center gap-6 md:grid-cols-2">
                 <div className={index % 2 === 1 ? "md:order-2" : undefined}>
-                  <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
+                  <div className="frame-clip relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
                     <Photo src={chapter.image} alt={chapter.title} />
                   </div>
                 </div>

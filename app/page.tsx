@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { CountStat } from "@/components/count-stat";
 import { HomeHero } from "@/components/home-hero";
 import { ProjectCard } from "@/components/project-card";
+import { ProjectWalk } from "@/components/project-walk";
 import { Reveal } from "@/components/reveal";
 import { Photo } from "@/components/photo";
 import { buttonVariants } from "@/components/ui/button";
@@ -15,6 +17,27 @@ import {
 } from "@/lib/content";
 import { cn } from "cn";
 
+const walkFrames = [
+  {
+    src: "/media/ba-addition-after.png",
+    alt: "The finished Sloan's Lake addition from the side yard",
+    label: "Side yard",
+    caption: "The new volume, flashed into the old wall, from the side yard.",
+  },
+  {
+    src: "/media/ba-sloans-floor-after.png",
+    alt: "The opened floor plate at the Sloan's Lake addition",
+    label: "Floor plate",
+    caption: "The opening where the new floor lands on the beam.",
+  },
+  {
+    src: "/media/ba-sloans-roof-after.png",
+    alt: "The roof tie-in on the Sloan's Lake bungalow",
+    label: "Roof tie-in",
+    caption: "The ridge married back into the 1924 bungalow.",
+  },
+];
+
 export default function HomePage() {
   const featured = projects.slice(0, 3);
   const quote = reviews[0];
@@ -26,10 +49,7 @@ export default function HomePage() {
       <section className="border-b border-border">
         <div className="mx-auto grid max-w-7xl grid-cols-2 md:grid-cols-4">
           {stats.map((stat) => (
-            <div key={stat.label} className="border-r border-border px-5 py-8 last:border-r-0 md:px-8">
-              <p className="font-heading text-3xl text-copper md:text-4xl">{stat.display}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{stat.label}</p>
-            </div>
+            <CountStat key={stat.label} value={stat.value} display={stat.display} label={stat.label} />
           ))}
         </div>
       </section>
@@ -56,31 +76,45 @@ export default function HomePage() {
 
       <section className="border-y border-border">
         {services.map((service, index) => (
-          <Reveal key={service.slug} x={index % 2 === 0 ? -36 : 36} y={0}>
-            <article className="mx-auto grid max-w-7xl items-center gap-8 border-b border-border px-5 py-12 last:border-b-0 md:grid-cols-2 md:px-8">
-              <div className={index % 2 === 1 ? "md:order-2" : undefined}>
-                <p className="eyebrow">{service.kicker}</p>
-                <h2 className="mt-3 font-heading text-4xl">{service.name}</h2>
-                <p className="mt-4 max-w-md text-muted-foreground leading-7">{service.summary}</p>
-                <Link href={`/services/${service.slug}`} className="mt-5 inline-block text-sm text-copper">
-                  See the sequence
-                </Link>
-              </div>
-              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
-                <Photo src={servicePhotos[service.slug]} alt={service.name} />
-              </div>
-            </article>
-          </Reveal>
+          <article
+            key={service.slug}
+            className="mx-auto grid max-w-7xl items-center gap-8 border-b border-border px-5 py-12 last:border-b-0 md:grid-cols-2 md:px-8"
+          >
+            <Reveal className={index % 2 === 1 ? "md:order-2" : undefined}>
+              <p className="eyebrow">{service.kicker}</p>
+              <h2 className="mt-3 font-heading text-4xl">{service.name}</h2>
+              <p className="mt-4 max-w-md text-muted-foreground leading-7">{service.summary}</p>
+              <Link
+                href={`/services/${service.slug}`}
+                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mt-6")}
+              >
+                See the sequence
+              </Link>
+            </Reveal>
+            <Reveal
+              clip
+              delay={0.08}
+              className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border"
+            >
+              <Photo src={servicePhotos[service.slug]} alt={service.name} />
+            </Reveal>
+          </article>
         ))}
       </section>
 
+      <ProjectWalk
+        frames={walkFrames}
+        title="Sloan's Lake, from the yard to the ridge."
+        href="/work/sloans-lake-addition"
+      />
+
       <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-        <div className="flex items-end justify-between gap-4">
-          <div>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <Reveal>
             <p className="eyebrow">Previous work</p>
             <h2 className="mt-3 font-heading text-4xl tracking-tight">Recent shells.</h2>
-          </div>
-          <Link href="/work" className="text-sm text-copper">
+          </Reveal>
+          <Link href="/work" className={buttonVariants({ variant: "outline", size: "sm" })}>
             All projects
           </Link>
         </div>
@@ -113,44 +147,48 @@ export default function HomePage() {
         </p>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-[1.2fr_0.8fr] md:px-8 md:py-24">
+      <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
         <Reveal>
-          <p className="eyebrow">{quote.neighborhood}</p>
-          <blockquote className="mt-4 font-heading text-3xl leading-snug md:text-4xl">
-            “{quote.quote}”
-          </blockquote>
-          <p className="mt-6 text-sm text-muted-foreground">
-            {quote.name} · {quote.project}
-          </p>
-          <Link href="/reviews" className="mt-4 inline-block text-sm text-copper">
-            More reviews
-          </Link>
+          <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr]">
+            <div>
+              <p className="eyebrow">{quote.neighborhood}</p>
+              <blockquote className="mt-4 font-heading text-3xl leading-snug md:text-4xl">
+                “{quote.quote}”
+              </blockquote>
+              <p className="mt-6 text-sm text-muted-foreground">
+                {quote.name} · {quote.project}
+              </p>
+              <Link href="/reviews" className="mt-4 inline-block text-sm text-copper">
+                More reviews
+              </Link>
+            </div>
+            <div className="grid gap-4">
+              <Link
+                href="/estimates"
+                className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-copper/60"
+              >
+                <p className="eyebrow">Estimates</p>
+                <h3 className="mt-3 font-heading text-3xl">Tell us the address and the work.</h3>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                  A six-step scope. You leave with a reference number the same day.
+                </p>
+              </Link>
+              <Link
+                href="/permits"
+                className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-copper/60"
+              >
+                <p className="eyebrow">Permits</p>
+                <h3 className="mt-3 font-heading text-3xl">Ask Helix to pull the packet.</h3>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                  Denver, Jefferson, Adams, Arapahoe, and Boulder, with a clear split of who signs.
+                </p>
+              </Link>
+              <Link href="/contact" className={buttonVariants({ variant: "outline" })}>
+                Contact the shop
+              </Link>
+            </div>
+          </div>
         </Reveal>
-        <div className="grid gap-4">
-          <Link
-            href="/estimates"
-            className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-copper/60"
-          >
-            <p className="eyebrow">Estimates</p>
-            <h3 className="mt-3 font-heading text-3xl">Tell us the address and the work.</h3>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              A four-step request. You leave with a reference number the same day.
-            </p>
-          </Link>
-          <Link
-            href="/permits"
-            className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-copper/60"
-          >
-            <p className="eyebrow">Permits</p>
-            <h3 className="mt-3 font-heading text-3xl">Ask Helix to pull the packet.</h3>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Denver, Jefferson, Adams, Arapahoe, and Boulder, with a clear split of who signs.
-            </p>
-          </Link>
-          <Link href="/contact" className={cn(buttonVariants({ variant: "outline" }), "h-11")}>
-            Contact the shop
-          </Link>
-        </div>
       </section>
     </>
   );

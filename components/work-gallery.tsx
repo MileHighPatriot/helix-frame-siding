@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ProjectCard } from "@/components/project-card";
+import { Reveal } from "@/components/reveal";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { projects, services, type ServiceSlug } from "@/lib/content";
 
@@ -44,8 +45,10 @@ export function WorkGallery() {
         </div>
       ) : (
         <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {visible.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+          {visible.map((project, index) => (
+            <Reveal key={project.slug} delay={(index % 3) * 0.04}>
+              <ProjectCard project={project} />
+            </Reveal>
           ))}
         </div>
       )}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Reveal } from "@/components/reveal";
 import { getTrade, trades } from "@/lib/content";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -23,10 +24,13 @@ export default async function TradePage({ params }: Props) {
 
   return (
     <section className="mx-auto max-w-3xl px-5 py-14 md:px-8">
-      <p className="eyebrow">{trade.craft}</p>
-      <h1 className="mt-3 font-heading text-5xl tracking-tight">{trade.name}</h1>
-      <p className="mt-3 text-copper">{trade.area}</p>
-      <p className="mt-6 text-lg leading-8 text-muted-foreground">{trade.history}</p>
+      <Reveal immediate>
+        <p className="eyebrow">{trade.craft}</p>
+        <h1 className="mt-3 font-heading text-5xl tracking-tight">{trade.name}</h1>
+        <p className="mt-3 text-copper">{trade.area}</p>
+        <p className="mt-6 text-lg leading-8 text-muted-foreground">{trade.history}</p>
+      </Reveal>
+      <Reveal delay={0.06}>
       <dl className="mt-8 divide-y divide-border rounded-xl border border-border">
         <Row term="Phone" value={trade.phone} href={trade.phoneHref} />
         <Row term="Email" value={trade.email} href={`mailto:${trade.email}`} />
@@ -35,6 +39,8 @@ export default async function TradePage({ params }: Props) {
         <Row term="Hours" value={trade.hours} />
         <Row term="License" value={trade.license} />
       </dl>
+      </Reveal>
+      <Reveal>
       <h2 className="mt-12 font-heading text-3xl">On a Helix job</h2>
       <p className="mt-4 leading-7 text-muted-foreground">{trade.onHelix}</p>
       <p className="mt-4 leading-7 text-muted-foreground">{trade.owns}</p>
@@ -44,6 +50,7 @@ export default async function TradePage({ params }: Props) {
       <Link href="/trades" className="mt-6 inline-block text-sm text-copper">
         All trades
       </Link>
+      </Reveal>
     </section>
   );
 }

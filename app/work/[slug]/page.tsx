@@ -27,7 +27,7 @@ export default async function ProjectPage({ params }: Props) {
     <>
       <section className="border-b border-border">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 md:grid-cols-[0.9fr_1.1fr] md:px-8">
-          <Reveal>
+          <Reveal immediate>
             <p className="eyebrow">
               {project.neighborhood}, {project.city} · {project.year}
             </p>
@@ -45,21 +45,23 @@ export default async function ProjectPage({ params }: Props) {
               ))}
             </div>
           </Reveal>
-          <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
+          <Reveal clip className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
             <Photo src={projectPhotos[project.slug]} alt={project.title} priority />
-          </div>
+          </Reveal>
         </div>
       </section>
       <section className="mx-auto grid max-w-7xl gap-6 px-5 py-8 md:grid-cols-3 md:px-8">
-        {project.figures.map((figure) => (
-          <div key={figure.label} className="rounded-xl border border-border p-5">
-            <p className="font-heading text-3xl text-copper">{figure.value}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{figure.label}</p>
-          </div>
+        {project.figures.map((figure, index) => (
+          <Reveal key={figure.label} delay={index * 0.04}>
+            <div className="rounded-xl border border-border p-5">
+              <p className="font-heading text-3xl text-copper">{figure.value}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{figure.label}</p>
+            </div>
+          </Reveal>
         ))}
       </section>
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-10 md:grid-cols-2 md:px-8">
-        <div>
+        <Reveal>
           <h2 className="font-heading text-3xl">The constraint</h2>
           <p className="mt-4 leading-7 text-muted-foreground">{project.challenge}</p>
           <h2 className="mt-10 font-heading text-3xl">Scope</h2>
@@ -70,8 +72,8 @@ export default async function ProjectPage({ params }: Props) {
               </li>
             ))}
           </ul>
-        </div>
-        <div>
+        </Reveal>
+        <Reveal delay={0.06}>
           <h2 className="font-heading text-3xl">Trades on the job</h2>
           <ul className="mt-4 space-y-2">
             {project.trades.map((trade) => {
@@ -94,7 +96,7 @@ export default async function ProjectPage({ params }: Props) {
           <Link href="/work" className="mt-6 inline-block text-sm text-copper">
             Back to all work
           </Link>
-        </div>
+        </Reveal>
       </section>
     </>
   );

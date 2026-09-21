@@ -32,7 +32,7 @@ export default function ServicesPage() {
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{service.summary}</p>
                 <p className="mt-4 text-sm text-copper">Open the scope</p>
               </div>
-              <div className="relative min-h-48 border-t border-border md:border-t-0 md:border-l">
+              <div className="frame-clip relative min-h-48 border-t border-border md:border-t-0 md:border-l">
                 <Photo src={servicePhotos[service.slug]} alt="" />
               </div>
             </Link>
