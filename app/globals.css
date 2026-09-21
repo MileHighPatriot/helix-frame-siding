@@ -156,6 +156,40 @@
   animation: helix-marquee 42s linear infinite;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .motion-rise,
+  .motion-left,
+  .motion-right,
+  .motion-step {
+    animation-duration: 0.7s;
+    animation-delay: var(--motion-delay, 0s);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: both;
+  }
+
+  .motion-rise {
+    animation-name: helix-rise;
+  }
+
+  .motion-left {
+    animation-name: helix-from-left;
+  }
+
+  .motion-right {
+    animation-name: helix-from-right;
+  }
+
+  .motion-step {
+    animation-duration: 0.35s;
+    animation-name: helix-step;
+  }
+
+  .motion-draw {
+    stroke-dasharray: 520;
+    animation: helix-draw 1.2s ease-in-out 0.35s both;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none;
@@ -168,5 +202,58 @@
   }
   to {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes helix-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes helix-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-36px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes helix-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(36px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes helix-step {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes helix-draw {
+  from {
+    stroke-dashoffset: 520;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }

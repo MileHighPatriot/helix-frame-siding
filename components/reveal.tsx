@@ -1,14 +1,11 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { cn } from "cn";
 
 export function Reveal({
   children,
   className,
   delay = 0,
   x = 0,
-  y = 28,
 }: {
   children: ReactNode;
   className?: string;
@@ -16,18 +13,15 @@ export function Reveal({
   x?: number;
   y?: number;
 }) {
-  const reduce = useReducedMotion();
+  const motionClass = x < 0 ? "motion-left" : x > 0 ? "motion-right" : "motion-rise";
 
   return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, x, y }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: "-10% 0px" }}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      className={cn(motionClass, className)}
+      style={{ "--motion-delay": `${delay}s` } as CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -40,16 +34,12 @@ export function RiseIn({
   className?: string;
   delay?: number;
 }) {
-  const reduce = useReducedMotion();
-
   return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      className={cn("motion-rise", className)}
+      style={{ "--motion-delay": `${delay}s` } as CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

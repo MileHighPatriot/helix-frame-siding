@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { AreaField, ChoiceField, FormStatus, SuccessPanel, TextField } from "@/components/forms/controls";
 import { jurisdictions, services } from "@/lib/content";
@@ -40,7 +39,6 @@ const stepFields: (keyof typeof empty)[][] = [
 ];
 
 export function PermitForm() {
-  const reduce = useReducedMotion();
   const [step, setStep] = useState(0);
   const [values, setValues] = useState(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -129,15 +127,7 @@ export function PermitForm() {
         ))}
       </div>
       <p className="text-sm text-muted-foreground">Step {step + 1} of 4</p>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={step}
-          initial={reduce ? false : { opacity: 0, x: 28 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={reduce ? undefined : { opacity: 0, x: -28 }}
-          transition={{ duration: 0.35 }}
-          className="grid gap-4"
-        >
+      <div key={step} className="motion-step grid gap-4">
           {step === 0 && (
             <>
               <ChoiceField id="jurisdiction" label="Jurisdiction" placeholder="Where is the property?" value={values.jurisdiction} options={jurisdictions.map((item) => item.name)} error={errors.jurisdiction} onChange={(value) => set("jurisdiction", value)} />
@@ -161,8 +151,7 @@ export function PermitForm() {
               <TextField id="phone" label="Phone" type="tel" value={values.phone} error={errors.phone} onChange={(value) => set("phone", value)} autoComplete="tel" />
             </>
           )}
-        </motion.div>
-      </AnimatePresence>
+      </div>
       <FormStatus status={status} message={message} />
       <div className="flex gap-3">
         {step > 0 && (
