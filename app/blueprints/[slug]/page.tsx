@@ -26,7 +26,7 @@ export default async function BlueprintPage({ params }: Props) {
   const project = getProject(sheet.projectSlug);
 
   return (
-    <section className="mx-auto max-w-7xl px-5 py-12 md:px-8">
+    <section className="shell py-12">
       <Reveal immediate>
         <p className="eyebrow">Sheet {sheet.sheet}</p>
         <h1 className="mt-3 font-heading text-4xl tracking-tight md:text-5xl">{sheet.title}</h1>

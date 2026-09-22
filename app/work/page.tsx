@@ -15,7 +15,7 @@ export default function WorkPage() {
         title="Shells we have stood and closed."
         lede="Each project is a case, not a thumbnail. Filter by the work Helix self-performed, then open the challenge, the trades, and the outcome."
       />
-      <section className="mx-auto max-w-7xl px-5 py-14 md:px-8">
+      <section className="shell py-14">
         <WorkGallery />
       </section>
     </>

@@ -39,7 +39,7 @@ export function TextField({
         autoComplete={autoComplete}
         aria-invalid={Boolean(error)}
         onChange={(event) => onChange(event.target.value)}
-        className="h-11"
+        className="h-12 rounded-xl bg-background px-4"
       />
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
@@ -71,7 +71,7 @@ export function AreaField({
         placeholder={placeholder}
         aria-invalid={Boolean(error)}
         onChange={(event) => onChange(event.target.value)}
-        className="min-h-32"
+        className="min-h-32 rounded-xl bg-background px-4 py-3"
       />
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
@@ -102,7 +102,7 @@ export function ChoiceField({
         value={value || null}
         onValueChange={(next) => onChange(next ?? "")}
       >
-        <SelectTrigger id={id} className="h-11 w-full" aria-invalid={Boolean(error)}>
+        <SelectTrigger id={id} className="h-12 w-full rounded-xl bg-background px-4" aria-invalid={Boolean(error)}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
@@ -154,11 +154,11 @@ export function SuccessPanel({
   onReset: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-copper/40 bg-card p-6" role="status">
+    <div className="rounded-2xl border border-copper/40 bg-card p-6 md:p-8" role="status">
       <p className="eyebrow">Received</p>
-      <h2 className="mt-3 font-heading text-3xl">{title}</h2>
+      <h2 className="display-sm mt-3">{title}</h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy}</p>
-      <p className="mt-6 font-heading text-4xl text-copper">{reference}</p>
+      <p className="mt-6 font-mono text-3xl tracking-tight text-copper">{reference}</p>
       <button type="button" className="mt-6 text-sm underline underline-offset-4" onClick={onReset}>
         Start another request
       </button>

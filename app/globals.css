@@ -7,12 +7,14 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-heading: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), ui-serif, Georgia, serif;
   --color-cedar: var(--cedar);
   --color-copper: var(--copper);
   --color-graphite: var(--graphite);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -52,70 +54,67 @@
 }
 
 :root {
-  --background: oklch(0.16 0.012 250);
-  --foreground: oklch(0.95 0.012 85);
-  --card: oklch(0.2 0.014 250);
-  --card-foreground: oklch(0.95 0.012 85);
-  --popover: oklch(0.2 0.014 250);
-  --popover-foreground: oklch(0.95 0.012 85);
-  --primary: oklch(0.72 0.13 55);
-  --primary-foreground: oklch(0.18 0.02 55);
-  --secondary: oklch(0.26 0.014 250);
-  --secondary-foreground: oklch(0.95 0.012 85);
-  --muted: oklch(0.24 0.012 250);
-  --muted-foreground: oklch(0.74 0.02 80);
-  --accent: oklch(0.28 0.02 70);
-  --accent-foreground: oklch(0.95 0.012 85);
-  --destructive: oklch(0.65 0.19 25);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.72 0.13 55);
-  --cedar: oklch(0.76 0.07 80);
-  --copper: oklch(0.72 0.13 55);
-  --graphite: oklch(0.13 0.01 250);
-  --chart-1: oklch(0.72 0.13 55);
-  --chart-2: oklch(0.76 0.07 80);
-  --chart-3: oklch(0.55 0.04 250);
-  --chart-4: oklch(0.4 0.02 250);
-  --chart-5: oklch(0.3 0.02 250);
-  --radius: 0.45rem;
-  --sidebar: oklch(0.18 0.012 250);
-  --sidebar-foreground: oklch(0.95 0.012 85);
-  --sidebar-primary: oklch(0.72 0.13 55);
-  --sidebar-primary-foreground: oklch(0.18 0.02 55);
-  --sidebar-accent: oklch(0.26 0.014 250);
-  --sidebar-accent-foreground: oklch(0.95 0.012 85);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.72 0.13 55);
+  --paper: #f3f0e9;
+  --ink: #141619;
+  --background: #f3f0e9;
+  --foreground: #16181b;
+  --card: #fbfaf6;
+  --card-foreground: #16181b;
+  --popover: #fbfaf6;
+  --popover-foreground: #16181b;
+  --primary: #b24f28;
+  --primary-foreground: #fff8f2;
+  --secondary: #e8e3d9;
+  --secondary-foreground: #16181b;
+  --muted: #ebe6dc;
+  --muted-foreground: #5f615d;
+  --accent: #e6dfd2;
+  --accent-foreground: #16181b;
+  --destructive: #b3261e;
+  --border: rgb(22 24 27 / 0.12);
+  --input: rgb(22 24 27 / 0.2);
+  --ring: #b24f28;
+  --cedar: #8a6843;
+  --copper: #b24f28;
+  --graphite: #141619;
+  --chart-1: #b24f28;
+  --chart-2: #8a6843;
+  --chart-3: #5f615d;
+  --chart-4: #3d4044;
+  --chart-5: #16181b;
+  --radius: 0.625rem;
+  --sidebar: #fbfaf6;
+  --sidebar-foreground: #16181b;
+  --sidebar-primary: #b24f28;
+  --sidebar-primary-foreground: #fff8f2;
+  --sidebar-accent: #e8e3d9;
+  --sidebar-accent-foreground: #16181b;
+  --sidebar-border: rgb(22 24 27 / 0.12);
+  --sidebar-ring: #b24f28;
 }
 
-.dark {
-  --background: oklch(0.16 0.012 250);
-  --foreground: oklch(0.95 0.012 85);
-  --card: oklch(0.2 0.014 250);
-  --card-foreground: oklch(0.95 0.012 85);
-  --popover: oklch(0.2 0.014 250);
-  --popover-foreground: oklch(0.95 0.012 85);
-  --primary: oklch(0.72 0.13 55);
-  --primary-foreground: oklch(0.18 0.02 55);
-  --secondary: oklch(0.26 0.014 250);
-  --secondary-foreground: oklch(0.95 0.012 85);
-  --muted: oklch(0.24 0.012 250);
-  --muted-foreground: oklch(0.74 0.02 80);
-  --accent: oklch(0.28 0.02 70);
-  --accent-foreground: oklch(0.95 0.012 85);
-  --destructive: oklch(0.65 0.19 25);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.72 0.13 55);
-  --sidebar: oklch(0.18 0.012 250);
-  --sidebar-foreground: oklch(0.95 0.012 85);
-  --sidebar-primary: oklch(0.72 0.13 55);
-  --sidebar-primary-foreground: oklch(0.18 0.02 55);
-  --sidebar-accent: oklch(0.26 0.014 250);
-  --sidebar-accent-foreground: oklch(0.95 0.012 85);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.72 0.13 55);
+.ink {
+  --background: #141619;
+  --foreground: #eeeae2;
+  --card: #1c1f22;
+  --card-foreground: #eeeae2;
+  --popover: #1c1f22;
+  --popover-foreground: #eeeae2;
+  --primary: #d06a3a;
+  --primary-foreground: #1a0d06;
+  --secondary: #24282c;
+  --secondary-foreground: #eeeae2;
+  --muted: #22262a;
+  --muted-foreground: #a6a29a;
+  --accent: #2a2e32;
+  --accent-foreground: #eeeae2;
+  --border: rgb(255 255 255 / 0.12);
+  --input: rgb(255 255 255 / 0.18);
+  --ring: #d06a3a;
+  --cedar: #c9a57a;
+  --copper: #d06a3a;
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 @layer base {
@@ -124,36 +123,103 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "cv11";
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
   }
   h1,
   h2,
   h3,
   h4 {
     font-family: var(--font-heading);
+    font-weight: 400;
+    font-variation-settings: "opsz" 96;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--copper) 28%, transparent);
+  }
+}
+
+@utility shell {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 86rem;
+  padding-inline: 1.25rem;
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 2.5rem;
   }
 }
 
 @utility eyebrow {
+  font-family: var(--font-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--copper);
-  font-weight: 600;
+  font-weight: 500;
+}
+
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+@utility display-xl {
+  font-family: var(--font-heading);
+  font-weight: 360;
+  letter-spacing: -0.034em;
+  line-height: 0.9;
+  font-size: clamp(3.3rem, 9vw, 9rem);
+}
+
+@utility display-lg {
+  font-family: var(--font-heading);
+  font-weight: 380;
+  letter-spacing: -0.03em;
+  line-height: 0.96;
+  font-size: clamp(2.6rem, 6vw, 5.6rem);
+}
+
+@utility display-md {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  line-height: 1.02;
+  font-size: clamp(2rem, 3.8vw, 3.5rem);
+}
+
+@utility display-sm {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
 }
 
 .grid-fade {
   background-image:
-    linear-gradient(to right, oklch(1 0 0 / 7%) 1px, transparent 1px),
-    linear-gradient(to bottom, oklch(1 0 0 / 7%) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    linear-gradient(to right, color-mix(in srgb, currentColor 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, currentColor 5%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at 30% 40%, black 20%, transparent 72%);
+}
+
+.hairline-x {
+  background-image: linear-gradient(to right, var(--border) 50%, transparent 50%);
+  background-size: 8px 1px;
+  background-repeat: repeat-x;
 }
 
 .marquee-track {
-  animation: helix-marquee 42s linear infinite;
+  animation: helix-marquee 48s linear infinite;
 }
 
 .frame-clip,
@@ -166,7 +232,7 @@
   .motion-rise[data-inview="true"],
   .motion-left[data-inview="true"],
   .motion-right[data-inview="true"] {
-    animation-duration: 0.85s;
+    animation-duration: 0.9s;
     animation-delay: var(--motion-delay, 0s);
     animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
     animation-fill-mode: both;
@@ -185,20 +251,12 @@
   }
 
   .motion-step {
-    animation-duration: 0.35s;
+    animation: helix-step 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--motion-delay, 0s);
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-    animation-fill-mode: both;
-    animation-name: helix-step;
-  }
-
-  .motion-draw[data-inview="true"] {
-    stroke-dasharray: 520;
-    animation: helix-draw 1.35s ease-in-out 0.4s both;
   }
 
   .motion-clip[data-inview="true"] {
-    animation: helix-clip 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: helix-clip 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--motion-delay, 0s);
   }
 
@@ -208,11 +266,11 @@
   }
 
   .ken-burns {
-    animation: helix-ken 26s ease-out both;
+    animation: helix-ken 28s ease-out both;
   }
 
   .project-walk.is-live {
-    height: 220vh;
+    height: 240vh;
   }
 
   .project-walk.is-live .project-walk-pin {
@@ -225,12 +283,12 @@
 
   .project-walk.is-live .walk-stage {
     position: relative;
-    height: min(46vh, 520px);
+    height: min(50vh, 560px);
   }
 
   @media (min-width: 1024px) {
     .project-walk.is-live .walk-stage {
-      height: min(68vh, 720px);
+      height: min(70vh, 760px);
     }
   }
 
@@ -243,6 +301,9 @@
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none;
+  }
+  html {
+    scroll-behavior: auto;
   }
 }
 
@@ -258,7 +319,7 @@
 @keyframes helix-rise {
   from {
     opacity: 0;
-    transform: translateY(var(--motion-distance, 12px));
+    transform: translateY(var(--motion-distance, 14px));
   }
   to {
     opacity: 1;
@@ -290,8 +351,8 @@
 
 @keyframes helix-clip {
   from {
-    clip-path: inset(16% 0 0 0);
-    transform: translateY(24px) scale(1.045);
+    clip-path: inset(14% 0 0 0);
+    transform: translateY(24px) scale(1.04);
   }
   to {
     clip-path: inset(0);
@@ -312,7 +373,7 @@
 
 @keyframes helix-ken {
   from {
-    transform: scale(1.12);
+    transform: scale(1.1);
   }
   to {
     transform: scale(1);
@@ -322,30 +383,11 @@
 @keyframes helix-step {
   from {
     opacity: 0;
-    transform: translateX(28px);
+    transform: translateX(24px);
   }
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .scene-plate.is-swap {
-    animation: scene-in 0.45s ease;
-  }
-
-  .scene-wash {
-    transition: background-color 0.35s ease, opacity 0.35s ease;
-  }
-}
-
-@keyframes scene-in {
-  from {
-    opacity: 0.35;
-  }
-  to {
-    opacity: 1;
   }
 }
 
@@ -355,5 +397,12 @@
   }
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion-draw[data-inview="true"] {
+    stroke-dasharray: 520;
+    animation: helix-draw 1.35s ease-in-out 0.4s both;
   }
 }

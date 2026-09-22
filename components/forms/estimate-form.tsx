@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { DesignParam, DesignStudio } from "@/components/design-studio";
 import { AreaField, ChoiceField, FormStatus, SuccessPanel, TextField } from "@/components/forms/controls";
 import { ScopeSheet } from "@/components/forms/scope-sheet";
@@ -167,14 +168,19 @@ export function EstimateForm() {
       <Suspense fallback={null}>
         <DesignParam onFound={preload} />
       </Suspense>
-      <div className="flex gap-2" aria-hidden>
+      <div className="flex gap-1.5" aria-hidden>
         {stepTitles.map((title, index) => (
-          <span key={title} className={index <= step ? "h-1 flex-1 bg-copper" : "h-1 flex-1 bg-border"} />
+          <span
+            key={title}
+            className={cn("h-1 flex-1 rounded-full transition-colors duration-500", index <= step ? "bg-copper" : "bg-border")}
+          />
         ))}
       </div>
       <div>
-        <p className="text-sm text-muted-foreground">Step {step + 1} of {stepTitles.length}</p>
-        <h2 className="mt-1 font-heading text-2xl">{stepTitles[step]}</h2>
+        <p className="label-mono">
+          Step {step + 1} of {stepTitles.length}
+        </p>
+        <h2 className="display-sm mt-2">{stepTitles[step]}</h2>
       </div>
       <div key={step} className="motion-step grid gap-4">
         {step === 0 && (
@@ -190,12 +196,21 @@ export function EstimateForm() {
                     aria-pressed={on}
                     onClick={() => toggleService(service.slug)}
                     className={cn(
-                      "rounded-xl border px-4 py-3 text-left",
-                      on ? "border-copper bg-copper/10" : "border-border",
+                      "relative rounded-2xl border bg-background px-5 py-4 text-left transition-colors",
+                      on ? "border-foreground ring-1 ring-foreground" : "border-border hover:border-foreground/30",
                     )}
                   >
-                    <span className="block font-heading text-xl">{service.name}</span>
-                    <span className="mt-1 block text-sm text-muted-foreground">{service.summary}</span>
+                    <span
+                      className={cn(
+                        "absolute top-4 right-4 grid size-5 place-items-center rounded-full border transition-colors",
+                        on ? "border-foreground bg-foreground text-background" : "border-border",
+                      )}
+                      aria-hidden
+                    >
+                      {on ? <Check className="size-3" /> : null}
+                    </span>
+                    <span className="block pr-8 font-heading text-2xl">{service.name}</span>
+                    <span className="mt-1 block text-sm leading-6 text-muted-foreground">{service.summary}</span>
                   </button>
                 );
               })}
@@ -268,12 +283,14 @@ export function EstimateForm() {
       <FormStatus status={status} message={message} />
       <div className="flex gap-3">
         {step > 0 && (
-          <Button type="button" variant="outline" className="h-11 px-5" onClick={() => setStep((current) => current - 1)}>
+          <Button type="button" variant="outline" size="lg" onClick={() => setStep((current) => current - 1)}>
+            <ArrowLeft className="size-4" aria-hidden />
             Back
           </Button>
         )}
-        <Button type="submit" className="h-11 px-5" disabled={status === "loading"}>
+        <Button type="submit" size="lg" disabled={status === "loading"}>
           {step < 5 ? "Continue" : status === "loading" ? "Sending…" : "Submit scope"}
+          {step < 5 ? <ArrowRight className="size-4" aria-hidden /> : null}
         </Button>
       </div>
     </form>

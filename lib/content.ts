@@ -18,11 +18,19 @@ export const company = {
 
 export const nav = [
   { href: "/services", label: "Services" },
+  { href: "/studio", label: "Design studio" },
   { href: "/work", label: "Work" },
   { href: "/blueprints", label: "Blueprints" },
   { href: "/story", label: "Story" },
-  { href: "/trades", label: "Trades" },
   { href: "/reviews", label: "Reviews" },
+] as const;
+
+export const secondaryNav = [
+  { href: "/team", label: "Team" },
+  { href: "/trades", label: "Trade bench" },
+  { href: "/permits", label: "Permits" },
+  { href: "/estimates", label: "Estimates" },
+  { href: "/contact", label: "Contact" },
 ] as const;
 
 export const processSteps = [

@@ -46,8 +46,8 @@ export function CountStat({
   }, [suffix, value]);
 
   return (
-    <div ref={ref} className="border-r border-border px-5 py-8 last:border-r-0 md:px-8">
-      <p className="font-heading text-3xl text-copper tabular-nums md:text-4xl" aria-label={display}>
+    <div ref={ref} className="border-border py-8 md:border-l md:pl-8 md:first:border-l-0 md:first:pl-0">
+      <p className="display-md tabular-nums" aria-label={display}>
         <span className="inline-grid">
           <span className="invisible col-start-1 row-start-1" aria-hidden>
             {display}
@@ -55,7 +55,7 @@ export function CountStat({
           <span className="col-start-1 row-start-1">{text}</span>
         </span>
       </p>
-      <p className="mt-2 text-sm text-muted-foreground">{label}</p>
+      <p className="label-mono mt-3">{label}</p>
     </div>
   );
 }

@@ -1,21 +1,15 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { CountStat } from "@/components/count-stat";
 import { HomeHero } from "@/components/home-hero";
+import { SectionHeading } from "@/components/page-hero";
 import { ProjectCard } from "@/components/project-card";
 import { ProjectWalk } from "@/components/project-walk";
 import { Reveal } from "@/components/reveal";
-import { Photo } from "@/components/photo";
+import { ServiceIndex } from "@/components/service-index";
+import { StudioTeaser } from "@/components/studio-teaser";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  processSteps,
-  projects,
-  reviews,
-  servicePhotos,
-  services,
-  stats,
-  trades,
-} from "@/lib/content";
-import { cn } from "cn";
+import { processSteps, projects, reviews, servicePhotos, services, stats, trades } from "@/lib/content";
 
 const walkFrames = [
   {
@@ -39,156 +33,132 @@ const walkFrames = [
 ];
 
 export default function HomePage() {
-  const featured = projects.slice(0, 3);
-  const quote = reviews[0];
+  const [lead, ...rest] = projects.slice(0, 3);
+  const [quote, ...more] = reviews;
 
   return (
     <>
       <HomeHero />
 
-      <section className="border-b border-border">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 md:grid-cols-4">
+      <section className="shell">
+        <div className="grid grid-cols-2 gap-x-6 border-b border-border md:grid-cols-4">
           {stats.map((stat) => (
             <CountStat key={stat.label} value={stat.value} display={stat.display} label={stat.label} />
           ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-        <Reveal>
-          <p className="eyebrow">How a job moves</p>
-          <h2 className="mt-3 max-w-xl font-heading text-4xl tracking-tight">
-            Seven marks from the first walk to the punch.
-          </h2>
-        </Reveal>
-        <ol className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="shell py-24 md:py-32">
+        <div className="grid gap-8 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-16">
+          <Reveal>
+            <p className="eyebrow">What Helix does</p>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <p className="display-md text-balance">
+              We frame the structure and close the envelope, the two layers every other trade has to trust.{" "}
+              <span className="text-muted-foreground">Then we put the rest of the bench on one calendar.</span>
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="shell pb-24 md:pb-32">
+        <SectionHeading kicker="Services" title="Six kinds of work, one crew in charge.">
+          <Link href="/services" className={buttonVariants({ variant: "outline" })}>
+            All services
+          </Link>
+        </SectionHeading>
+        <div className="mt-12">
+          <ServiceIndex services={services} photos={servicePhotos} />
+        </div>
+      </section>
+
+      <section id="studio" className="ink py-24 md:py-32">
+        <div className="shell">
+          <StudioTeaser />
+        </div>
+      </section>
+
+      <section className="shell py-24 md:py-32">
+        <SectionHeading kicker="How a job moves" title="Seven marks from the first walk to the punch." />
+        <ol className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
           {processSteps.map((step, index) => (
-            <Reveal key={step.n} delay={index * 0.05}>
-              <li className="h-full rounded-xl border border-border bg-card p-5">
-                <p className="font-heading text-copper">{step.n}</p>
-                <h3 className="mt-3 font-heading text-2xl">{step.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.copy}</p>
+            <Reveal key={step.n} delay={index * 0.04} className="bg-background">
+              <li className="flex h-full flex-col p-6">
+                <span className="font-mono text-xs text-copper">{step.n}</span>
+                <h3 className="mt-10 text-2xl tracking-tight">{step.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{step.copy}</p>
               </li>
             </Reveal>
           ))}
         </ol>
       </section>
 
-      <section className="border-y border-border">
-        {services.map((service, index) => (
-          <article
-            key={service.slug}
-            className="mx-auto grid max-w-7xl items-center gap-8 border-b border-border px-5 py-12 last:border-b-0 md:grid-cols-2 md:px-8"
-          >
-            <Reveal className={index % 2 === 1 ? "md:order-2" : undefined}>
-              <p className="eyebrow">{service.kicker}</p>
-              <h2 className="mt-3 font-heading text-4xl">{service.name}</h2>
-              <p className="mt-4 max-w-md text-muted-foreground leading-7">{service.summary}</p>
-              <Link
-                href={`/services/${service.slug}`}
-                className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mt-6")}
-              >
-                See the sequence
-              </Link>
-            </Reveal>
-            <Reveal
-              clip
-              delay={0.08}
-              className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border"
-            >
-              <Photo src={servicePhotos[service.slug]} alt={service.name} />
-            </Reveal>
-          </article>
-        ))}
-      </section>
+      <ProjectWalk frames={walkFrames} title="Sloan's Lake, from the yard to the ridge." href="/work/sloans-lake-addition" />
 
-      <ProjectWalk
-        frames={walkFrames}
-        title="Sloan's Lake, from the yard to the ridge."
-        href="/work/sloans-lake-addition"
-      />
-
-      <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <Reveal>
-            <p className="eyebrow">Previous work</p>
-            <h2 className="mt-3 font-heading text-4xl tracking-tight">Recent shells.</h2>
-          </Reveal>
-          <Link href="/work" className={buttonVariants({ variant: "outline", size: "sm" })}>
+      <section className="shell py-24 md:py-32">
+        <SectionHeading kicker="Recent work" title="Shells we have stood and closed.">
+          <Link href="/work" className={buttonVariants({ variant: "outline" })}>
             All projects
           </Link>
-        </div>
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {featured.map((project, index) => (
-            <Reveal key={project.slug} delay={index * 0.08}>
-              <ProjectCard project={project} />
-            </Reveal>
-          ))}
+        </SectionHeading>
+        <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8">
+          <Reveal>
+            <ProjectCard project={lead} size="large" />
+          </Reveal>
+          <div className="grid content-start gap-8 border-border lg:border-l lg:pl-8">
+            {[...rest, ...projects.slice(3, 4)].map((project, index) => (
+              <Reveal key={project.slug} delay={0.06 + index * 0.06} className="border-b border-border pb-8 last:border-b-0 last:pb-0">
+                <ProjectCard project={project} size="compact" />
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="overflow-hidden border-y border-border py-6">
-        <p className="px-5 text-center eyebrow md:px-8">Trade bench</p>
-        <div className="mt-4 flex overflow-hidden">
-          <div className="marquee-track flex min-w-max gap-10 pr-10">
+      <section className="border-y border-border bg-card">
+        <div className="shell grid gap-12 py-24 md:py-32 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-20">
+          <Reveal>
+            <p className="eyebrow">{quote.neighborhood} · {quote.project}</p>
+            <blockquote className="display-md mt-6 text-balance">“{quote.quote}”</blockquote>
+            <p className="mt-8 text-sm">
+              <span className="font-medium">{quote.name}</span>
+            </p>
+          </Reveal>
+          <div className="grid content-start gap-8">
+            {more.slice(0, 2).map((review, index) => (
+              <Reveal key={review.name} delay={0.06 + index * 0.06} className="border-t border-border pt-6">
+                <p className="text-lg leading-8">“{review.quote}”</p>
+                <p className="label-mono mt-4">
+                  {review.name} · {review.neighborhood}
+                </p>
+              </Reveal>
+            ))}
+            <Link href="/reviews" className="inline-flex items-center gap-2 text-sm font-medium text-copper">
+              Read every review
+              <ArrowUpRight className="size-4" aria-hidden />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="overflow-hidden py-14">
+        <div className="shell mb-8 flex items-center justify-between gap-4">
+          <p className="eyebrow">The trade bench</p>
+          <Link href="/trades" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+            How the bench is scheduled
+          </Link>
+        </div>
+        <div className="flex overflow-hidden">
+          <div className="marquee-track flex min-w-max gap-12 pr-12">
             {[...trades, ...trades].map((trade, index) => (
-              <span key={`${trade.name}-${index}`} className="font-heading text-2xl whitespace-nowrap text-foreground/80">
-                {trade.craft}
-                <span className="mx-3 text-copper">/</span>
-                {trade.name}
+              <span key={`${trade.name}-${index}`} className="flex items-baseline gap-4 whitespace-nowrap">
+                <span className="font-heading text-4xl tracking-tight md:text-5xl">{trade.name}</span>
+                <span className="label-mono">{trade.craft}</span>
               </span>
             ))}
           </div>
         </div>
-        <p className="mt-4 text-center text-sm">
-          <Link href="/trades" className="text-copper">
-            How the bench is scheduled
-          </Link>
-        </p>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-        <Reveal>
-          <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr]">
-            <div>
-              <p className="eyebrow">{quote.neighborhood}</p>
-              <blockquote className="mt-4 font-heading text-3xl leading-snug md:text-4xl">
-                “{quote.quote}”
-              </blockquote>
-              <p className="mt-6 text-sm text-muted-foreground">
-                {quote.name} · {quote.project}
-              </p>
-              <Link href="/reviews" className="mt-4 inline-block text-sm text-copper">
-                More reviews
-              </Link>
-            </div>
-            <div className="grid gap-4">
-              <Link
-                href="/estimates"
-                className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-copper/60"
-              >
-                <p className="eyebrow">Estimates</p>
-                <h3 className="mt-3 font-heading text-3xl">Tell us the address and the work.</h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                  A six-step scope. You leave with a reference number the same day.
-                </p>
-              </Link>
-              <Link
-                href="/permits"
-                className="rounded-xl border border-border bg-card p-6 transition-colors hover:border-copper/60"
-              >
-                <p className="eyebrow">Permits</p>
-                <h3 className="mt-3 font-heading text-3xl">Ask Helix to pull the packet.</h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                  Denver, Jefferson, Adams, Arapahoe, and Boulder, with a clear split of who signs.
-                </p>
-              </Link>
-              <Link href="/contact" className={buttonVariants({ variant: "outline" })}>
-                Contact the shop
-              </Link>
-            </div>
-          </div>
-        </Reveal>
       </section>
     </>
   );

@@ -19,7 +19,7 @@ export default function TradesPage() {
         title="We contract the trades. You still call Helix."
         lede="Helix does not hand you a list and leave. Electrical, plumbing, roofing, concrete, HVAC, insulation, windows, and drywall are companies we already schedule. They work Denver and south of Denver. They own their license and their work. We own the sequence."
       />
-      <section className="mx-auto max-w-7xl px-5 py-14 md:px-8">
+      <section className="shell py-14">
         <div className="grid gap-4 md:grid-cols-2">
           {trades.map((trade, index) => (
             <Reveal key={trade.slug} delay={index * 0.04}>

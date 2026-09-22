@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ChevronsLeftRight } from "lucide-react";
 import { Photo } from "@/components/photo";
 
 export function BeforeAfter({
@@ -38,7 +39,7 @@ export function BeforeAfter({
     const src = showAfter ? after : before;
     return (
       <figure>
-        <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-border">
+        <div className="relative aspect-[16/9] overflow-hidden rounded-2xl">
           <Photo src={src} alt={showAfter ? `After: ${alt}` : `Before: ${alt}`} />
         </div>
         <div className="mt-3 flex gap-2">
@@ -59,7 +60,7 @@ export function BeforeAfter({
             After
           </button>
         </div>
-        <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">{caption}</figcaption>
+        <figcaption className="mt-4 text-sm leading-6 text-muted-foreground">{caption}</figcaption>
       </figure>
     );
   }
@@ -68,7 +69,7 @@ export function BeforeAfter({
     <figure>
       <div
         ref={frame}
-        className="relative aspect-[16/9] cursor-ew-resize overflow-hidden rounded-xl border border-border select-none"
+        className="relative aspect-[4/3] cursor-ew-resize touch-pan-y overflow-hidden rounded-2xl select-none sm:aspect-[16/9]"
         onPointerDown={(event) => {
           event.currentTarget.setPointerCapture(event.pointerId);
           move(event.clientX);
@@ -81,10 +82,10 @@ export function BeforeAfter({
         <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}>
           <Photo src={before} alt="" />
         </div>
-        <span className="absolute top-3 left-3 rounded-full bg-background/80 px-2 py-1 text-xs tracking-wide uppercase">
+        <span className="absolute top-4 left-4 rounded-full bg-black/55 px-3 py-1.5 font-mono text-[0.65rem] tracking-[0.14em] text-white uppercase backdrop-blur">
           Before
         </span>
-        <span className="absolute top-3 right-3 rounded-full bg-background/80 px-2 py-1 text-xs tracking-wide uppercase">
+        <span className="absolute top-4 right-4 rounded-full bg-black/55 px-3 py-1.5 font-mono text-[0.65rem] tracking-[0.14em] text-white uppercase backdrop-blur">
           After
         </span>
         <button
@@ -101,11 +102,13 @@ export function BeforeAfter({
             if (event.key === "ArrowRight") setPosition((value) => Math.min(94, value + 4));
           }}
         >
-          <span className="mx-auto block h-full w-0.5 bg-copper" />
-          <span className="absolute top-1/2 left-1/2 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-copper bg-background" />
+          <span className="mx-auto block h-full w-0.5 bg-white shadow-[0_0_12px_rgba(0,0,0,0.35)]" />
+          <span className="absolute top-1/2 left-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-neutral-900 shadow-lg">
+            <ChevronsLeftRight className="size-4" aria-hidden />
+          </span>
         </button>
       </div>
-      <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">{caption}</figcaption>
+      <figcaption className="mt-4 text-sm leading-6 text-muted-foreground">{caption}</figcaption>
     </figure>
   );
 }

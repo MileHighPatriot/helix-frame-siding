@@ -13,9 +13,11 @@ npm run dev -- --hostname 0.0.0.0 --port 43123
 
 Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
-## Design scenes
+## Design studio
 
-Each service keeps one finished project in the frame. The controls change that part of the photograph: siding field and gable, deck boards, handrail, and fascia, and the same kind of split for outdoor structures, remodels, additions, and framing. A color control repaints that surface in the swatch. Sky, brick, and landscaping stay as photographed. The estimate uses those same controls, and the scope sheet shows the composite with the written spec.
+Each service has a live 3D model built with three.js and React Three Fiber (`components/studio`). Every board, trim piece, rail, and timber is its own object, so a color or profile control changes only the part it names. The selection model, labels, and written specs live in `lib/scenes.ts`.
+
+The studio appears on each service page, on `/studio` with tabs for all six services, and in step two of the estimate. A design can be shared as `?design=<id>`, and "Price this design" carries it into the estimate. Browsers without WebGL get a message and keep every option and the written spec.
 
 ## Forms
 
@@ -29,6 +31,7 @@ The live site is [https://milehighpatriot.github.io/helix-frame-siding/](https:/
 
 - `/` home
 - `/services` and `/services/[slug]`
+- `/studio`
 - `/work` and `/work/[slug]`
 - `/blueprints` and `/blueprints/[slug]`
 - `/story`, `/team`, `/trades`, `/reviews`

@@ -1,97 +1,70 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
+import { ArrowUpRight, Box } from "lucide-react";
 import { Photo } from "@/components/photo";
 import { buttonVariants } from "@/components/ui/button";
 import { company, heroPhoto } from "@/lib/content";
-
-const lines = ["Frame the", "structure.", "Finish the", "skin."];
+import { cn } from "cn";
 
 const facts = [
-  `Framing since ${company.founded}`,
-  "Decatur Street shop, Denver",
-  `Registration ${company.registration}`,
+  { label: "Framing since", value: String(company.founded) },
+  { label: "Self-performed", value: "Frame and skin" },
+  { label: "Shop", value: "Decatur Street, Denver" },
 ];
+
+function rise(delay: number, distance = 24) {
+  return { "--motion-delay": `${delay}s`, "--motion-distance": `${distance}px` } as CSSProperties;
+}
 
 export function HomeHero() {
   return (
-    <section className="relative -mt-[4.5rem] min-h-svh overflow-hidden">
+    <section className="ink relative -mt-[4.5rem] flex min-h-[100svh] flex-col overflow-hidden">
       <div className="absolute inset-0">
         <div className="ken-burns absolute inset-0">
-          <Photo
-            src={heroPhoto}
-            alt="A Denver bungalow with a new fiber-cement addition and a tied-in roof"
-            priority
-            sizes="100vw"
-          />
+          <Photo src={heroPhoto} alt="A Denver bungalow with a new fiber-cement addition and a tied-in roof" priority sizes="100vw" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-graphite via-graphite/88 to-graphite/25" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-black/45" />
-        <div className="grid-fade pointer-events-none absolute inset-0 opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0e1012] via-[#0e1012]/35 to-[#0e1012]/55" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0e1012]/80 via-[#0e1012]/25 to-transparent" />
       </div>
-      <div className="relative mx-auto flex min-h-svh max-w-7xl flex-col justify-end px-5 pt-32 pb-14 md:px-8 md:pb-20">
-        <p className="motion-rise eyebrow" data-inview="true">
+
+      <div className="shell relative flex flex-1 flex-col justify-end pt-32 pb-8 md:pb-10">
+        <p className="motion-rise eyebrow flex items-center gap-3 text-white/80" data-inview="true" style={rise(0.05, 12)}>
+          <span className="size-1.5 rounded-full bg-copper" aria-hidden />
           Denver · Front Range
         </p>
-        <h1 className="mt-4 max-w-4xl font-heading text-5xl leading-[0.92] tracking-tight md:text-7xl lg:text-8xl">
-          {lines.map((line, index) => (
-            <span
-              key={line}
-              className="motion-rise block"
-              data-inview="true"
-              style={
-                {
-                  "--motion-delay": `${0.08 + index * 0.08}s`,
-                  "--motion-distance": "28px",
-                } as CSSProperties
-              }
-            >
-              {line}
-            </span>
-          ))}
+        <h1 className="display-xl mt-6 max-w-6xl text-white">
+          <span className="motion-rise block" data-inview="true" style={rise(0.12)}>
+            Frame the structure.
+          </span>
+          <span className="motion-rise block" data-inview="true" style={rise(0.22)}>
+            Finish the <em className="font-heading text-[#f1b48c] italic">skin.</em>
+          </span>
         </h1>
-        <svg viewBox="0 0 520 16" className="mt-6 h-4 w-full max-w-md" aria-hidden>
-          <path
-            className="motion-draw"
-            data-inview="true"
-            d="M2 10 H180 L210 4 H360 L390 12 H518"
-            fill="none"
-            stroke="var(--copper)"
-            strokeWidth="1.5"
-          />
-        </svg>
-        <p
-          className="motion-rise mt-6 max-w-xl text-lg leading-8 text-foreground/85"
-          data-inview="true"
-          style={{ "--motion-delay": "0.46s", "--motion-distance": "18px" } as CSSProperties}
-        >
-          Helix Frame & Siding builds the skeleton and the exterior envelope, then
-          keeps electricians, plumbers, roofers, and the rest of the bench on one
-          schedule.
-        </p>
-        <div
-          className="motion-rise mt-8 flex flex-col gap-3 sm:flex-row"
-          data-inview="true"
-          style={{ "--motion-delay": "0.58s" } as CSSProperties}
-        >
-          <Link href="/estimates" className={buttonVariants({ size: "lg" })}>
-            Request an estimate
-          </Link>
-          <Link href="/permits" className={buttonVariants({ variant: "outline", size: "lg" })}>
-            Permit services
-          </Link>
+
+        <div className="motion-rise mt-10 grid gap-8 lg:grid-cols-[minmax(0,36rem)_auto] lg:items-end lg:justify-between" data-inview="true" style={rise(0.4, 16)}>
+          <p className="text-lg leading-8 text-pretty text-white/80">
+            Helix builds the skeleton and the exterior envelope of Denver homes, then keeps the electrician, the plumber, and the roofer on one schedule. One crew answers for the whole shell.
+          </p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link href="/estimates" className={buttonVariants({ size: "lg" })}>
+              Get an estimate
+              <ArrowUpRight className="size-4" aria-hidden />
+            </Link>
+            <Link href="/studio" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "border-white/35 text-white hover:border-white/70 hover:bg-white/10")}>
+              <Box className="size-4" aria-hidden />
+              Design it in 3D
+            </Link>
+          </div>
         </div>
-        <ul
-          className="motion-rise mt-10 flex max-w-3xl flex-col gap-2 text-[0.68rem] tracking-[0.16em] text-foreground/75 uppercase sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3 sm:gap-y-2"
-          data-inview="true"
-          style={{ "--motion-delay": "0.7s" } as CSSProperties}
-        >
-          {facts.map((fact, index) => (
-            <li key={fact} className="flex items-center gap-3">
-              {index > 0 && <span className="hidden text-copper sm:inline">/</span>}
-              <span>{fact}</span>
-            </li>
+
+        <dl className="motion-rise mt-14 grid grid-cols-2 gap-6 border-t border-white/15 pt-6 sm:grid-cols-3" data-inview="true" style={rise(0.55, 10)}>
+          {facts.map((fact) => (
+            <div key={fact.label}>
+              <dt className="font-mono text-[0.66rem] tracking-[0.14em] text-white/55 uppercase">{fact.label}</dt>
+              <dd className="mt-1.5 text-sm text-white/90 sm:text-base">{fact.value}</dd>
+            </div>
           ))}
-        </ul>
+        </dl>
       </div>
     </section>
   );

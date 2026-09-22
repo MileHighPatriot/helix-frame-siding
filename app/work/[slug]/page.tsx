@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowUpRight } from "lucide-react";
+import { PageHero } from "@/components/page-hero";
 import { Photo } from "@/components/photo";
 import { Reveal } from "@/components/reveal";
 import { getProject, getTradeByName, projectPhotos, projects, serviceName } from "@/lib/content";
@@ -22,81 +24,103 @@ export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) notFound();
+  const index = projects.findIndex((item) => item.slug === project.slug);
+  const next = projects[(index + 1) % projects.length];
 
   return (
     <>
-      <section className="border-b border-border">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 md:grid-cols-[0.9fr_1.1fr] md:px-8">
-          <Reveal immediate>
-            <p className="eyebrow">
-              {project.neighborhood}, {project.city} · {project.year}
-            </p>
-            <h1 className="mt-3 font-heading text-4xl tracking-tight md:text-5xl">{project.title}</h1>
-            <p className="mt-5 text-lg leading-8 text-muted-foreground">{project.summary}</p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {project.services.map((service) => (
-                <Link
-                  key={service}
-                  href={`/services/${service}`}
-                  className="rounded-full border border-border px-3 py-1 text-xs tracking-wide uppercase"
-                >
-                  {serviceName(service)}
-                </Link>
-              ))}
-            </div>
+      <PageHero
+        kicker={`${project.neighborhood}, ${project.city} · ${project.year}`}
+        title={project.title}
+        lede={project.summary}
+        image={projectPhotos[project.slug]}
+        imageAlt={project.title}
+        actions={project.services.map((service) => (
+          <Link
+            key={service}
+            href={`/services/${service}`}
+            className="rounded-full border border-border px-3.5 py-1.5 text-sm transition-colors hover:border-foreground/40"
+          >
+            {serviceName(service)}
+          </Link>
+        ))}
+      />
+
+      <section className="shell">
+        <dl className="grid grid-cols-1 border-b border-border sm:grid-cols-3">
+          {project.figures.map((figure, figureIndex) => (
+            <Reveal key={figure.label} delay={figureIndex * 0.05} className="border-border py-8 sm:border-l sm:pl-8 sm:first:border-l-0 sm:first:pl-0">
+              <dt className="label-mono">{figure.label}</dt>
+              <dd className="display-md mt-3">{figure.value}</dd>
+            </Reveal>
+          ))}
+        </dl>
+      </section>
+
+      <section className="shell grid gap-14 py-20 md:py-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-20">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <Reveal>
+            <p className="eyebrow">The constraint</p>
+            <p className="display-sm mt-5 text-balance">{project.challenge}</p>
           </Reveal>
-          <Reveal clip className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border">
-            <Photo src={projectPhotos[project.slug]} alt={project.title} priority />
+          <Reveal delay={0.06} className="mt-14">
+            <p className="eyebrow">Outcome</p>
+            <p className="mt-5 text-lg leading-8 text-muted-foreground">{project.outcome}</p>
+          </Reveal>
+        </div>
+        <div>
+          <Reveal>
+            <p className="eyebrow">Scope</p>
+            <ol className="mt-6 border-t border-border">
+              {project.scope.map((item, itemIndex) => (
+                <li key={item} className="grid grid-cols-[2.5rem_1fr] gap-4 border-b border-border py-5">
+                  <span className="font-mono text-xs text-muted-foreground">0{itemIndex + 1}</span>
+                  <span className="text-lg leading-7">{item}</span>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+          <Reveal delay={0.06} className="mt-14">
+            <p className="eyebrow">Trades on the job</p>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+              {project.trades.map((trade) => {
+                const partner = getTradeByName(trade);
+                const body = (
+                  <>
+                    <span className="label-mono">{partner?.craft ?? "Partner"}</span>
+                    <span className="mt-2 block font-heading text-xl">{trade}</span>
+                  </>
+                );
+                return (
+                  <li key={trade}>
+                    {partner ? (
+                      <Link href={`/trades/${partner.slug}`} className="block h-full rounded-2xl border border-border bg-card p-5 transition-colors hover:border-foreground/30">
+                        {body}
+                      </Link>
+                    ) : (
+                      <div className="h-full rounded-2xl border border-border bg-card p-5">{body}</div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           </Reveal>
         </div>
       </section>
-      <section className="mx-auto grid max-w-7xl gap-6 px-5 py-8 md:grid-cols-3 md:px-8">
-        {project.figures.map((figure, index) => (
-          <Reveal key={figure.label} delay={index * 0.04}>
-            <div className="rounded-xl border border-border p-5">
-              <p className="font-heading text-3xl text-copper">{figure.value}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{figure.label}</p>
-            </div>
-          </Reveal>
-        ))}
-      </section>
-      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-10 md:grid-cols-2 md:px-8">
-        <Reveal>
-          <h2 className="font-heading text-3xl">The constraint</h2>
-          <p className="mt-4 leading-7 text-muted-foreground">{project.challenge}</p>
-          <h2 className="mt-10 font-heading text-3xl">Scope</h2>
-          <ul className="mt-4 space-y-3">
-            {project.scope.map((item) => (
-              <li key={item} className="border-l border-cedar pl-4 text-sm leading-6">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </Reveal>
-        <Reveal delay={0.06}>
-          <h2 className="font-heading text-3xl">Trades on the job</h2>
-          <ul className="mt-4 space-y-2">
-            {project.trades.map((trade) => {
-              const partner = getTradeByName(trade);
-              return (
-                <li key={trade} className="rounded-lg border border-border px-4 py-3 text-sm">
-                  {partner ? (
-                    <Link href={`/trades/${partner.slug}`} className="text-copper">
-                      {trade}
-                    </Link>
-                  ) : (
-                    trade
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-          <h2 className="mt-10 font-heading text-3xl">Outcome</h2>
-          <p className="mt-4 leading-7 text-muted-foreground">{project.outcome}</p>
-          <Link href="/work" className="mt-6 inline-block text-sm text-copper">
-            Back to all work
-          </Link>
-        </Reveal>
+
+      <section className="border-t border-border">
+        <Link href={`/work/${next.slug}`} className="group shell grid items-center gap-8 py-16 md:grid-cols-[minmax(0,1fr)_20rem] md:py-20">
+          <div>
+            <p className="label-mono">Next project</p>
+            <p className="display-md mt-4 transition-colors group-hover:text-copper">
+              {next.title}
+              <ArrowUpRight className="ml-3 inline size-8 align-baseline transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" aria-hidden />
+            </p>
+          </div>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+            <Photo src={projectPhotos[next.slug]} alt="" sizes="20rem" />
+          </div>
+        </Link>
       </section>
     </>
   );

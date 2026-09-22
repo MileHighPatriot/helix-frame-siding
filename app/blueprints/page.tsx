@@ -17,7 +17,7 @@ export default function BlueprintsPage() {
         title="Sheets we actually build from."
         lede="These are original Helix plates: a floor, a rainscreen section, a deck frame, and a roof tie-in. Open one to pan the sheet, then drag the before-and-after of the job it belongs to."
       />
-      <section className="mx-auto grid max-w-7xl gap-5 px-5 py-14 md:grid-cols-2 md:px-8">
+      <section className="shell grid gap-5 py-14 md:grid-cols-2">
         {blueprints.map((sheet, index) => {
           const project = getProject(sheet.projectSlug);
           return (

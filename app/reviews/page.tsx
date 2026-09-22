@@ -16,7 +16,7 @@ export default function ReviewsPage() {
         title="What owners say after the punch."
         lede="Notes from owners across Denver and the Front Range, each tied to a neighborhood and the kind of work Helix actually did."
       />
-      <section className="mx-auto grid max-w-7xl gap-5 px-5 py-14 md:grid-cols-2 md:px-8">
+      <section className="shell grid gap-5 py-14 md:grid-cols-2">
         {reviews.map((review, index) => (
           <Reveal key={review.name} delay={(index % 4) * 0.05}>
             <figure className="flex h-full flex-col rounded-xl border border-border bg-card p-6">

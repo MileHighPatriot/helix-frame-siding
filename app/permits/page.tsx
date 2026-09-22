@@ -18,7 +18,7 @@ export default function PermitsPage() {
         title="We assemble the packet. You still sign where the city asks."
         lede="Helix prepares building-permit sets for the frame, the envelope, decks, and additions we build. Mechanical permits stay with the licensed trade. The owner signs what the jurisdiction will not take from a contractor alone."
       />
-      <section className="mx-auto grid max-w-7xl gap-8 px-5 py-14 md:grid-cols-2 md:px-8">
+      <section className="shell grid gap-8 py-14 md:grid-cols-2">
         <Reveal>
         <article className="rounded-xl border border-border p-6">
           <h2 className="font-heading text-3xl">Helix pulls</h2>
@@ -44,7 +44,7 @@ export default function PermitsPage() {
         </article>
         </Reveal>
       </section>
-      <section className="mx-auto max-w-7xl px-5 pb-6 md:px-8">
+      <section className="shell pb-6">
         <h2 className="font-heading text-3xl">Front Range checklist</h2>
         <Accordion className="mt-4">
           {jurisdictions.map((item) => (

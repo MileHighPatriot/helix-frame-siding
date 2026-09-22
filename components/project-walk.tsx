@@ -57,14 +57,14 @@ export function ProjectWalk({
   const active = frames[Math.round(position)] ?? frames[0];
 
   return (
-    <section ref={sectionRef} className={cn("project-walk border-y border-border", live && "is-live")}>
-      <div className="project-walk-pin mx-auto w-full max-w-7xl px-5 py-16 md:px-8 md:py-20">
+    <section ref={sectionRef} className={cn("project-walk ink", live && "is-live")}>
+      <div className="project-walk-pin shell py-20 md:py-24">
         <div className="grid w-full items-center gap-8 lg:grid-cols-[0.78fr_1.22fr]">
           <div>
             <p className="eyebrow">A house, turned</p>
-            <h2 className="mt-3 font-heading text-4xl tracking-tight md:text-5xl">{title}</h2>
+            <h2 className="display-md mt-4 text-balance">{title}</h2>
             <p className="mt-4 max-w-md text-muted-foreground leading-7">{active.caption}</p>
-            <p className="mt-4 text-xs tracking-[0.18em] text-copper uppercase">{active.label}</p>
+            <p className="label-mono mt-5 text-copper">{active.label}</p>
             <ol className="mt-6 flex gap-2" aria-hidden>
               {frames.map((frame, index) => (
                 <li
@@ -88,7 +88,7 @@ export function ProjectWalk({
               return (
                 <figure
                   key={frame.src}
-                  className="walk-frame overflow-hidden rounded-xl border border-border"
+                  className="walk-frame overflow-hidden rounded-2xl"
                   aria-hidden={live && opacity < 0.35 ? true : undefined}
                   style={live ? { opacity, transform: `translate3d(${shift}px, 0, 0) scale(${1.04 - Math.min(distance, 1) * 0.04})` } : undefined}
                 >

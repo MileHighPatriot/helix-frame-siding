@@ -1,14 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { BeforeAfter } from "@/components/before-after";
 import { DesignStudio } from "@/components/design-studio";
-import { Photo } from "@/components/photo";
+import { PageHero, SectionHeading } from "@/components/page-hero";
 import { ProjectCard } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
 import { buttonVariants } from "@/components/ui/button";
-import { getService, projectsForService, serviceComparisons, servicePhotos, services } from "@/lib/content";
-import { cn } from "cn";
+import {
+  getService,
+  getTradeByName,
+  projectsForService,
+  serviceComparisons,
+  servicePhotos,
+  serviceTrades,
+  services,
+} from "@/lib/content";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -28,96 +36,111 @@ export default async function ServicePage({ params }: Props) {
   const service = getService(slug);
   if (!service) notFound();
   const related = projectsForService(service.slug);
+  const comparison = serviceComparisons[service.slug];
+  const partners = serviceTrades[service.slug].map((name) => getTradeByName(name)).filter((trade) => trade !== undefined);
 
   return (
     <>
-      <section className="border-b border-border">
-        <div className="mx-auto grid max-w-7xl items-center gap-8 px-5 py-14 md:grid-cols-2 md:px-8">
-          <Reveal immediate>
-            <p className="eyebrow">{service.kicker}</p>
-            <h1 className="mt-3 font-heading text-5xl tracking-tight">{service.name}</h1>
-            <p className="mt-5 text-lg leading-8 text-muted-foreground">{service.lede}</p>
-            <Link href="/estimates" className={cn(buttonVariants(), "mt-6 h-11 px-5")}>
-              Estimate this scope
+      <PageHero
+        kicker={`Services · ${service.kicker}`}
+        title={service.name}
+        lede={service.lede}
+        image={servicePhotos[service.slug]}
+        imageAlt={service.name}
+        actions={
+          <>
+            <a href="#studio" className={buttonVariants({ variant: "ink" })}>
+              Design it in 3D
+              <ArrowDown className="size-4" aria-hidden />
+            </a>
+            <Link href="/estimates" className={buttonVariants({ variant: "outline" })}>
+              Get an estimate
             </Link>
-          </Reveal>
-          <Reveal
-            clip
-            delay={0.08}
-            className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border"
-          >
-            <Photo src={servicePhotos[service.slug]} alt={service.name} priority />
+          </>
+        }
+      />
+
+      <section id="studio" className="shell scroll-mt-24 py-20 md:py-28">
+        <SectionHeading
+          kicker="Design studio"
+          title={`One ${service.name.toLowerCase()} project. Change any part of it.`}
+          lede="Drag to turn the model. Each control changes only the part it names, and the spec underneath updates with it."
+        />
+        <div className="mt-10">
+          <DesignStudio service={service.slug} />
+        </div>
+      </section>
+
+      <section className="ink py-20 md:py-28">
+        <div className="shell">
+          <SectionHeading kicker="Before and after" title="Drag across the job." />
+          <Reveal className="frame-clip mt-10 overflow-hidden rounded-2xl">
+            <BeforeAfter before={comparison.before} after={comparison.after} caption={comparison.caption} alt={service.name} />
           </Reveal>
         </div>
       </section>
-      <section className="border-b border-border">
-        <div className="mx-auto max-w-7xl px-5 py-14 md:px-8">
-          <Reveal>
-            <h2 className="font-heading text-3xl">Before and after</h2>
-            <div className="frame-clip mt-6 overflow-hidden rounded-xl">
-              <BeforeAfter
-                before={serviceComparisons[service.slug].before}
-                after={serviceComparisons[service.slug].after}
-                caption={serviceComparisons[service.slug].caption}
-                alt={service.name}
-              />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-      <section className="border-b border-border">
-        <div className="mx-auto max-w-7xl px-5 py-14 md:px-8">
-          <Reveal>
-            <p className="eyebrow">Design options</p>
-            <h2 className="mt-3 max-w-2xl font-heading text-4xl tracking-tight">
-              Materials, colors, and the way the piece is built.
-            </h2>
-            <p className="mt-4 max-w-2xl text-muted-foreground leading-7">
-              The project stays in the frame. Change the material, the design, or a color, and only that part of the photograph moves.
-            </p>
-          </Reveal>
-          <div className="mt-8">
-            <DesignStudio service={service.slug} />
-          </div>
-        </div>
-      </section>
-      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-2 md:px-8">
+
+      <section className="shell grid gap-14 py-20 md:py-28 lg:grid-cols-2 lg:gap-20">
         <Reveal>
-          <h2 className="font-heading text-3xl">What is in the scope</h2>
-          <ul className="mt-5 space-y-3">
-            {service.scope.map((item) => (
-              <li key={item} className="border-l border-copper pl-4 text-sm leading-6">
-                {item}
+          <p className="eyebrow">What is in the scope</p>
+          <ul className="mt-8 border-t border-border">
+            {service.scope.map((item, index) => (
+              <li key={item} className="grid grid-cols-[2.5rem_1fr] gap-4 border-b border-border py-5">
+                <span className="font-mono text-xs text-muted-foreground">0{index + 1}</span>
+                <span className="text-lg leading-7">{item}</span>
               </li>
             ))}
           </ul>
         </Reveal>
         <Reveal delay={0.06}>
-          <h2 className="font-heading text-3xl">Typical sequence</h2>
-          <ol className="mt-5 space-y-4">
+          <p className="eyebrow">Typical sequence</p>
+          <ol className="relative mt-8 space-y-8 before:absolute before:top-2 before:bottom-2 before:left-[0.6875rem] before:w-px before:bg-border">
             {service.sequence.map((item, index) => (
-              <li key={item} className="grid grid-cols-[auto_1fr] gap-4">
-                <span className="font-heading text-copper">0{index + 1}</span>
-                <span className="text-sm leading-6 text-muted-foreground">{item}</span>
+              <li key={item} className="relative grid grid-cols-[1.5rem_1fr] gap-5">
+                <span className="relative mt-1.5 grid size-[1.375rem] place-items-center rounded-full border border-border bg-background font-mono text-[0.6rem]">
+                  {index + 1}
+                </span>
+                <span className="text-lg leading-7 text-muted-foreground">{item}</span>
               </li>
             ))}
           </ol>
+          {partners.length > 0 ? (
+            <div className="mt-12 rounded-2xl border border-border bg-card p-6">
+              <p className="label-mono">Partners Helix schedules</p>
+              <ul className="mt-4 grid gap-2">
+                {partners.map((trade) => (
+                  <li key={trade.slug}>
+                    <Link href={`/trades/${trade.slug}`} className="group flex items-baseline justify-between gap-4 py-1">
+                      <span className="font-heading text-xl transition-colors group-hover:text-copper">{trade.name}</span>
+                      <span className="label-mono">{trade.craft}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </Reveal>
       </section>
-      {related.length > 0 && (
+
+      {related.length > 0 ? (
         <section className="border-t border-border">
-          <div className="mx-auto max-w-7xl px-5 py-14 md:px-8">
-            <h2 className="font-heading text-3xl">Related work</h2>
-            <div className="mt-6 grid gap-5 md:grid-cols-3">
+          <div className="shell py-20 md:py-28">
+            <SectionHeading kicker="Related work" title={`${service.name} we have built.`}>
+              <Link href="/work" className={buttonVariants({ variant: "outline" })}>
+                All projects
+                <ArrowUpRight className="size-4" aria-hidden />
+              </Link>
+            </SectionHeading>
+            <div className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
               {related.slice(0, 3).map((project, index) => (
-                <Reveal key={project.slug} delay={index * 0.04}>
+                <Reveal key={project.slug} delay={index * 0.05}>
                   <ProjectCard project={project} />
                 </Reveal>
               ))}
             </div>
           </div>
         </section>
-      )}
+      ) : null}
     </>
   );
 }
