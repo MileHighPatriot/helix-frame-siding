@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { DesignStudio } from "@/components/design-studio";
+import { Suspense, useState } from "react";
+import { DesignParam, DesignStudio } from "@/components/design-studio";
 import { AreaField, ChoiceField, FormStatus, SuccessPanel, TextField } from "@/components/forms/controls";
 import { ScopeSheet } from "@/components/forms/scope-sheet";
 import { Button } from "@/components/ui/button";
 import { defaultDesignId, services, type ServiceSlug } from "@/lib/content";
 import { acceptLead, estimateSchema, type EstimateInput } from "@/lib/leads";
+import { parseSelection } from "@/lib/scenes";
 import { cn } from "cn";
 
 const timelines = [
@@ -55,6 +56,19 @@ export function EstimateForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "error" | "success">("idle");
   const [message, setMessage] = useState("");
   const [reference, setReference] = useState("");
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const activeService = activeTab && values.services.includes(activeTab) ? activeTab : values.services[0];
+
+  function preload(id: string) {
+    const parsed = parseSelection(id);
+    if (!parsed) return;
+    setValues((current) => ({
+      ...current,
+      services: current.services.includes(parsed.service) ? current.services : [...current.services, parsed.service],
+      designs: { ...current.designs, [parsed.service]: id },
+    }));
+    setActiveTab(parsed.service);
+  }
 
   function set<K extends keyof EstimateInput>(key: K, value: EstimateInput[K]) {
     setValues((current) => ({ ...current, [key]: value }));
@@ -150,6 +164,9 @@ export function EstimateForm() {
         submit();
       }}
     >
+      <Suspense fallback={null}>
+        <DesignParam onFound={preload} />
+      </Suspense>
       <div className="flex gap-2" aria-hidden>
         {stepTitles.map((title, index) => (
           <span key={title} className={index <= step ? "h-1 flex-1 bg-copper" : "h-1 flex-1 bg-border"} />
@@ -186,22 +203,39 @@ export function EstimateForm() {
             {errors.services ? <p className="mt-2 text-sm text-destructive">{errors.services}</p> : null}
           </fieldset>
         )}
-        {step === 1 &&
-          values.services.map((slug) => {
-            const service = services.find((item) => item.slug === slug);
-            return (
-              <fieldset key={slug} className="rounded-xl border border-border p-4">
-                <legend className="font-heading text-xl">{service?.name}</legend>
-                <div className="mt-4">
-                  <DesignStudio
-                    service={slug as ServiceSlug}
-                    value={values.designs[slug] ?? defaultDesignId(slug as ServiceSlug)}
-                    onChange={(id) => set("designs", { ...values.designs, [slug]: id })}
-                  />
-                </div>
-              </fieldset>
-            );
-          })}
+        {step === 1 && activeService ? (
+          <div className="grid gap-4">
+            {values.services.length > 1 ? (
+              <div role="tablist" aria-label="Service" className="flex flex-wrap gap-2">
+                {values.services.map((slug) => {
+                  const on = slug === activeService;
+                  return (
+                    <button
+                      key={slug}
+                      type="button"
+                      role="tab"
+                      aria-selected={on}
+                      onClick={() => setActiveTab(slug)}
+                      className={cn(
+                        "rounded-full border px-4 py-2 text-sm transition-colors",
+                        on ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground/40",
+                      )}
+                    >
+                      {services.find((item) => item.slug === slug)?.name}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
+            <DesignStudio
+              key={activeService}
+              compact
+              service={activeService as ServiceSlug}
+              value={values.designs[activeService] ?? defaultDesignId(activeService as ServiceSlug)}
+              onChange={(id) => set("designs", { ...values.designs, [activeService]: id })}
+            />
+          </div>
+        ) : null}
         {step === 1 && errors.designs ? <p className="text-sm text-destructive">{errors.designs}</p> : null}
         {step === 2 && (
           <>

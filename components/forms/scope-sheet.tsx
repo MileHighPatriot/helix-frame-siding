@@ -52,7 +52,13 @@ export function ScopeSheet({
           return (
             <li key={slug} className="grid gap-4 border-t border-border pt-4">
               {design ? (
-                <DesignStage design={design} alt={design.name} />
+                <DesignStage
+                  service={design.service}
+                  selection={design.selection}
+                  interactive={false}
+                  controls={false}
+                  className="aspect-video rounded-xl"
+                />
               ) : (
                 <div className="aspect-video rounded-xl border border-dashed border-border" />
               )}

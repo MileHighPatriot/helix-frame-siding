@@ -1,169 +1,158 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { mediaSrc } from "@/components/photo";
-import type { DesignOption } from "@/lib/scenes";
+import dynamic from "next/dynamic";
+import { Component, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { Minus, Move3d, Plus, RotateCcw } from "lucide-react";
+import { stageViews, type StageApi } from "@/components/studio/views";
+import type { ServiceSlug } from "@/lib/content-types";
+import type { Selection } from "@/lib/scenes";
 import { cn } from "cn";
 
-const imageCache = new Map<string, Promise<HTMLImageElement>>();
+const StageCanvas = dynamic(() => import("@/components/studio/stage-canvas"), { ssr: false });
 
-export function DesignStage({ design, alt }: { design: DesignOption; alt: string }) {
-  const plateKey = design.layers.map((layer) => layer.src).join("|");
-  const signature = `${plateKey}::${design.washes.map((wash) => `${wash.mask}@${wash.hex}@${wash.slot}`).join("|")}`;
-  const [front, setFront] = useState<string | null>(null);
-  const [back, setBack] = useState<string | null>(null);
-  const shown = useRef<string | null>(null);
-  const plateShown = useRef(plateKey);
-  const designRef = useRef(design);
+let webglSupport: boolean | undefined;
+function detectWebGL() {
+  if (webglSupport === undefined) {
+    try {
+      const canvas = document.createElement("canvas");
+      webglSupport = Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"));
+    } catch {
+      webglSupport = false;
+    }
+  }
+  return webglSupport;
+}
+const noop = () => () => {};
 
-  useEffect(() => {
-    designRef.current = design;
-  });
+class StageBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
 
-  useEffect(() => {
-    let cancel = false;
-    const timerIds: number[] = [];
-    const nextPlate = plateKey;
-    composite(designRef.current)
-      .then((url) => {
-        if (cancel) return;
-        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (!reduce && plateShown.current !== nextPlate && shown.current) {
-          setBack(shown.current);
-          timerIds.push(window.setTimeout(() => setBack(null), 480));
-        }
-        plateShown.current = nextPlate;
-        shown.current = url;
-        setFront(url);
-      })
-      .catch(() => {
-        if (!cancel) setFront(null);
-      });
-    return () => {
-      cancel = true;
-      timerIds.forEach((id) => window.clearTimeout(id));
-    };
-  }, [plateKey, signature]);
+export function DesignStage({
+  service,
+  selection,
+  interactive = true,
+  controls = true,
+  className,
+}: {
+  service: ServiceSlug;
+  selection: Selection;
+  interactive?: boolean;
+  controls?: boolean;
+  className?: string;
+}) {
+  const webgl = useSyncExternalStore(noop, detectWebGL, () => undefined);
+  const views = stageViews[service];
+  const [viewId, setViewId] = useState(views[0].id);
+  const [ready, setReady] = useState(false);
+  const apiRef = useRef<StageApi | null>(null);
+  const fallback = <StageFallback />;
 
   return (
-    <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-graphite">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={mediaSrc(design.layers[0].src)} alt={alt} className="absolute inset-0 h-full w-full object-cover" />
-      {back ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={back} alt="" className="absolute inset-0 h-full w-full object-cover" />
+    <div className={cn("relative isolate overflow-hidden bg-[#dce2e5] [&_canvas]:touch-pan-y!", className)}>
+      {webgl === false ? (
+        fallback
+      ) : webgl ? (
+        <StageBoundary fallback={fallback}>
+          <div className={cn("absolute inset-0 transition-opacity duration-700", ready ? "opacity-100" : "opacity-0")}>
+            <StageCanvas
+              service={service}
+              selection={selection}
+              viewId={viewId}
+              interactive={interactive}
+              apiRef={apiRef}
+              onReady={() => setReady(true)}
+            />
+          </div>
+        </StageBoundary>
       ) : null}
-      {front ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={front}
-          alt=""
-          className={cn("absolute inset-0 h-full w-full object-cover", back && "scene-plate is-swap")}
-        />
+
+      {webgl !== false && !ready ? (
+        <div className="absolute inset-0 grid place-items-center">
+          <div className="flex items-center gap-3 rounded-full bg-white/70 px-4 py-2 font-mono text-[11px] tracking-[0.14em] text-neutral-700 uppercase backdrop-blur">
+            <span className="size-2 animate-pulse rounded-full bg-primary" />
+            Building the model
+          </div>
+        </div>
+      ) : null}
+
+      {controls && webgl !== false ? (
+        <>
+          {interactive ? (
+            <div className="pointer-events-none absolute top-3 left-3 flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 font-mono text-[10.5px] tracking-[0.12em] text-neutral-700 uppercase shadow-sm backdrop-blur">
+              <Move3d className="size-3.5" aria-hidden />
+              Drag to turn
+            </div>
+          ) : null}
+          <div className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-2">
+            <div role="group" aria-label="Camera view" className="flex rounded-full bg-white/85 p-1 shadow-sm backdrop-blur">
+              {views.map((view) => (
+                <button
+                  key={view.id}
+                  type="button"
+                  aria-pressed={viewId === view.id}
+                  onClick={() => {
+                    if (viewId === view.id) apiRef.current?.reset();
+                    setViewId(view.id);
+                  }}
+                  className={cn(
+                    "rounded-full px-3 py-1.5 text-xs font-medium text-neutral-700 transition-colors",
+                    viewId === view.id ? "bg-neutral-900 text-white" : "hover:bg-black/5",
+                  )}
+                >
+                  {view.label}
+                </button>
+              ))}
+            </div>
+            {interactive ? (
+              <div className="flex rounded-full bg-white/85 p-1 shadow-sm backdrop-blur">
+                <StageButton label="Zoom in" onClick={() => apiRef.current?.zoom(1.6)}>
+                  <Plus className="size-4" />
+                </StageButton>
+                <StageButton label="Zoom out" onClick={() => apiRef.current?.zoom(-1.6)}>
+                  <Minus className="size-4" />
+                </StageButton>
+                <StageButton label="Reset view" onClick={() => apiRef.current?.reset()}>
+                  <RotateCcw className="size-3.5" />
+                </StageButton>
+              </div>
+            ) : null}
+          </div>
+        </>
       ) : null}
     </div>
   );
 }
 
-async function composite(design: DesignOption) {
-  const base = await loadImage(mediaSrc(design.layers[0].src));
-  const width = base.naturalWidth;
-  const height = base.naturalHeight;
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const context = canvas.getContext("2d", { willReadFrequently: true });
-  if (!context) return mediaSrc(design.layers[0].src);
-  context.drawImage(base, 0, 0, width, height);
-
-  let frame = context.getImageData(0, 0, width, height);
-  for (const wash of design.washes.filter((item) => item.slot === "base")) {
-    const mask = await loadMask(mediaSrc(wash.mask), width, height);
-    recolor(frame.data, mask, wash.hex, width, height);
-  }
-  context.putImageData(frame, 0, 0);
-
-  for (const layer of design.layers.slice(1)) {
-    if (!layer.mask) continue;
-    const overlay = await loadImage(mediaSrc(layer.src));
-    const clipped = document.createElement("canvas");
-    clipped.width = width;
-    clipped.height = height;
-    const overlayContext = clipped.getContext("2d");
-    if (!overlayContext) continue;
-    overlayContext.drawImage(overlay, 0, 0, width, height);
-    overlayContext.globalCompositeOperation = "destination-in";
-    overlayContext.drawImage(await loadImage(mediaSrc(layer.mask)), 0, 0, width, height);
-    context.drawImage(clipped, 0, 0);
-  }
-
-  frame = context.getImageData(0, 0, width, height);
-  for (const wash of design.washes.filter((item) => item.slot === "top")) {
-    const mask = await loadMask(mediaSrc(wash.mask), width, height);
-    recolor(frame.data, mask, wash.hex, width, height);
-  }
-  context.putImageData(frame, 0, 0);
-  return canvas.toDataURL("image/jpeg", 0.9);
+function StageButton({ label, onClick, children }: { label: string; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+      className="grid size-8 place-items-center rounded-full text-neutral-700 transition-colors hover:bg-black/5"
+    >
+      {children}
+    </button>
+  );
 }
 
-function recolor(data: Uint8ClampedArray, mask: Uint8ClampedArray, hex: string, width: number, height: number) {
-  const tone = parseHex(hex);
-  let sum = 0;
-  let count = 0;
-  const pixels = width * height;
-  for (let index = 0; index < pixels; index += 1) {
-    if (mask[index * 4 + 3] < 128) continue;
-    const offset = index * 4;
-    sum += 0.2126 * data[offset] + 0.7152 * data[offset + 1] + 0.0722 * data[offset + 2];
-    count += 1;
-  }
-  if (!count) return;
-  const mean = sum / count;
-  for (let index = 0; index < pixels; index += 1) {
-    const alpha = mask[index * 4 + 3] / 255;
-    if (alpha < 0.08) continue;
-    const offset = index * 4;
-    const light = 0.2126 * data[offset] + 0.7152 * data[offset + 1] + 0.0722 * data[offset + 2];
-    const exposure = clamp((light / mean) ** 0.35, 0.9, 1.06);
-    data[offset] = data[offset] * (1 - alpha) + tone[0] * exposure * alpha;
-    data[offset + 1] = data[offset + 1] * (1 - alpha) + tone[1] * exposure * alpha;
-    data[offset + 2] = data[offset + 2] * (1 - alpha) + tone[2] * exposure * alpha;
-  }
-}
-
-function parseHex(hex: string) {
-  const value = hex.replace("#", "");
-  return [
-    Number.parseInt(value.slice(0, 2), 16),
-    Number.parseInt(value.slice(2, 4), 16),
-    Number.parseInt(value.slice(4, 6), 16),
-  ];
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
-}
-
-function loadImage(src: string) {
-  const cached = imageCache.get(src);
-  if (cached) return cached;
-  const pending = new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Could not load ${src}`));
-    image.src = src;
-  });
-  imageCache.set(src, pending);
-  return pending;
-}
-
-async function loadMask(src: string, width: number, height: number) {
-  const image = await loadImage(src);
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const context = canvas.getContext("2d", { willReadFrequently: true });
-  if (!context) return new Uint8ClampedArray(width * height * 4);
-  context.drawImage(image, 0, 0, width, height);
-  return context.getImageData(0, 0, width, height).data;
+function StageFallback() {
+  return (
+    <div className="absolute inset-0 grid place-items-center p-6 text-center">
+      <div className="max-w-sm">
+        <p className="font-mono text-[11px] tracking-[0.14em] text-neutral-600 uppercase">3D preview unavailable</p>
+        <p className="mt-2 text-sm text-neutral-700">
+          This browser could not start the 3D model. Every option and the written spec still work, and they go into the estimate the same way.
+        </p>
+      </div>
+    </div>
+  );
 }
