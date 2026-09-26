@@ -271,6 +271,9 @@
 
   .project-walk.is-live {
     height: 240vh;
+    /* The frames slide sideways and scale up; keep them inside the screen on phones.
+       clip (not hidden) so the sticky pin still works. */
+    overflow-x: clip;
   }
 
   .project-walk.is-live .project-walk-pin {
