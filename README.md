@@ -23,7 +23,7 @@ Estimate, permit, and contact requests are checked in the browser and return a r
 
 ## GitHub Pages
 
-The live site is [https://milehighpatriot.github.io/helix-frame-siding/](https://milehighpatriot.github.io/helix-frame-siding/). `npm run pages` builds a static export into `docs/`, which is the folder GitHub Pages publishes from `main`.
+The live site is [https://helix.5280webs.com](https://helix.5280webs.com) (`public/CNAME` sets the domain). `npm run pages` builds a static export into `docs/`, which is the folder GitHub Pages publishes from `main`.
 
 ## Pages
 

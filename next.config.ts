@@ -2,13 +2,13 @@ import type { NextConfig } from "next";
 
 const pages = process.env.GITHUB_PAGES === "1";
 
-const basePath = pages ? "/helix-frame-siding" : "";
+// Served from the root of helix.5280webs.com (public/CNAME), so no base path.
+const basePath = "";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1"],
   output: pages ? "export" : undefined,
   basePath,
-  assetPrefix: pages ? "/helix-frame-siding/" : undefined,
   trailingSlash: pages,
   images: { unoptimized: true },
   env: {
