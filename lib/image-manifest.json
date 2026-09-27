@@ -1,0 +1,516 @@
+{
+  "/media/ba-addition-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-addition-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-berkeley-deck-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-berkeley-deck-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-deck-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-deck-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-framing-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-framing-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-outdoor-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-outdoor-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-rainscreen-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-rainscreen-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-remodel-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-remodel-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-siding-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-siding-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-sloans-floor-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-sloans-floor-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-sloans-roof-after.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/ba-sloans-roof-before.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/design-addition-matched.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-addition-second.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-addition-single.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-addition-volume.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-deck-cedar.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-deck-composite-brown.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-deck-composite-gray.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-deck-guard.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-deck-hardwood.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-deck-picture-frame.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-framing-beam.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-framing-ijoist.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-framing-platform.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-framing-roof.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-framing-stair.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-outdoor-attached.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-outdoor-pavilion.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-outdoor-pergola.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-remodel-dropped.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-remodel-flush.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-remodel-kitchen.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-remodel-stair.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-siding-batten-graphite.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-siding-batten-white.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-siding-engineered-black.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-siding-lap-cedar.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-siding-lap-graphite.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-siding-lap-white.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-siding-panel-black.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-siding-panel-sage.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/design-siding-wood-cedar.png": [
+    384,
+    640,
+    828,
+    1080,
+    1152
+  ],
+  "/media/hero-denver-house.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/portrait-cole-brennan.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-daniel-cho.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-evan-brooks.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-lena-hart.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-luis-ortega.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-marcus-hale.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-maya-solis.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-naomi-okonkwo.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-priya-shah.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-ruthie-lang.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/portrait-sofia-alvarez.png": [
+    384,
+    640,
+    828,
+    864
+  ],
+  "/media/service-additions.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/service-decking.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/service-framing.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/service-outdoor.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/service-remodels.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/service-siding.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/story-decatur-shop.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/story-envelope-crew.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/story-globeville-bay.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/story-job-walk.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/story-trade-bench.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ],
+  "/media/story-wheat-ridge-frame.png": [
+    384,
+    640,
+    828,
+    1080,
+    1280
+  ]
+}

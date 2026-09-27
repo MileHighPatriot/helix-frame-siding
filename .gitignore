@@ -43,3 +43,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# resized WebP copies, rebuilt by `npm run images` (docs/ keeps the published copy)
+/public/_img/

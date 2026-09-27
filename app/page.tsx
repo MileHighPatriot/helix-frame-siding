@@ -83,13 +83,13 @@ export default function HomePage() {
         <SectionHeading kicker="How a job moves" title="Seven marks from the first walk to the punch." />
         <ol className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
           {processSteps.map((step, index) => (
-            <Reveal key={step.n} delay={index * 0.04} className="bg-background">
-              <li className="flex h-full flex-col p-6">
+            <li key={step.n} className="bg-background">
+              <Reveal delay={index * 0.04} className="flex h-full flex-col p-6">
                 <span className="font-mono text-xs text-copper">{step.n}</span>
                 <h3 className="mt-10 text-2xl tracking-tight">{step.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{step.copy}</p>
-              </li>
-            </Reveal>
+              </Reveal>
+            </li>
           ))}
         </ol>
       </section>

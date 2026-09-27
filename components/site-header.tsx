@@ -33,7 +33,7 @@ export function SiteHeader() {
       )}
     >
       <div className="shell flex h-[4.5rem] items-center justify-between gap-6">
-        <Link href="/" aria-label="Helix Frame & Siding home" className="shrink-0">
+        <Link href="/" className="shrink-0">
           <Logo />
         </Link>
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">

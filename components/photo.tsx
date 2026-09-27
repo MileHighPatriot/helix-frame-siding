@@ -26,7 +26,9 @@ export function Photo({
       src={mediaSrc(src)}
       alt={alt}
       fill
-      priority={priority}
+      // Next 16 deprecated `priority`; eager + high fetch priority is the documented replacement.
+      loading={priority ? "eager" : undefined}
+      fetchPriority={priority ? "high" : undefined}
       sizes={sizes}
       className={cn("object-cover", className)}
     />

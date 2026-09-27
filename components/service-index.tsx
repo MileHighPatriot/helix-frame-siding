@@ -26,7 +26,7 @@ export function ServiceIndex({ services, photos }: { services: Service[]; photos
                   <span
                     className={cn(
                       "font-heading text-3xl tracking-tight transition-colors md:text-[2.6rem]",
-                      active === index ? "text-foreground" : "text-foreground/55 lg:text-foreground/45",
+                      active === index ? "text-foreground" : "text-foreground/55",
                     )}
                   >
                     {service.name}

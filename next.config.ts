@@ -10,7 +10,8 @@ const nextConfig: NextConfig = {
   output: pages ? "export" : undefined,
   basePath,
   trailingSlash: pages,
-  images: { unoptimized: true },
+  // Photos are served as pre-built WebP copies (scripts/optimize-images.mjs + lib/image-loader.ts).
+  images: { loader: "custom", loaderFile: "./lib/image-loader.ts" },
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath,
   },
