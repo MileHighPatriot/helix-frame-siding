@@ -43,7 +43,7 @@ export default function TradesPage() {
               If a partner has to be on site the morning of inspection, Evan puts them there. The estimate names which trades Helix will carry.
             </p>
           </div>
-          <Link href="/estimates" className={cn(buttonVariants(), "mt-5 h-11 px-5 md:mt-0")}>
+          <Link href="/estimates" prefetch={false} className={cn(buttonVariants(), "mt-5 h-11 px-5 md:mt-0")}>
             Start an estimate
           </Link>
         </div>

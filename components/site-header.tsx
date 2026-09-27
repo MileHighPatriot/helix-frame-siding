@@ -72,7 +72,7 @@ export function SiteHeader() {
             <Phone className="size-3.5" aria-hidden />
             {company.phone}
           </a>
-          <Link href="/estimates" className={cn(buttonVariants({ size: "sm" }), "hidden sm:inline-flex")}>
+          <Link href="/estimates" prefetch={false} className={cn(buttonVariants({ size: "sm" }), "hidden sm:inline-flex")}>
             Get an estimate
           </Link>
           <Sheet open={open} onOpenChange={setOpen}>
@@ -114,7 +114,7 @@ export function SiteHeader() {
                 </div>
               </nav>
               <div className="grid gap-3 border-t border-border p-5">
-                <Link href="/estimates" onClick={() => setOpen(false)} className={cn(buttonVariants({ size: "lg" }), "w-full")}>
+                <Link href="/estimates" prefetch={false} onClick={() => setOpen(false)} className={cn(buttonVariants({ size: "lg" }), "w-full")}>
                   Get an estimate
                   <ArrowUpRight className="size-4" aria-hidden />
                 </Link>

@@ -60,7 +60,7 @@ export default async function BlueprintPage({ params }: Props) {
         <Link href="/blueprints" className="text-copper">
           All sheets
         </Link>
-        <Link href="/permits" className="text-copper">
+        <Link href="/permits" prefetch={false} className="text-copper">
           Request permit service
         </Link>
       </div>

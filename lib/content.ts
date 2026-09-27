@@ -25,6 +25,12 @@ export const nav = [
   { href: "/reviews", label: "Reviews" },
 ] as const;
 
+/**
+ * Pages with lead forms. Their code bundles zod (~120 KB), so links to them skip Next's
+ * viewport prefetch; otherwise every page downloads the form code right after load.
+ */
+export const formRoutes = ["/estimates", "/contact", "/permits"];
+
 export const secondaryNav = [
   { href: "/team", label: "Team" },
   { href: "/trades", label: "Trade bench" },

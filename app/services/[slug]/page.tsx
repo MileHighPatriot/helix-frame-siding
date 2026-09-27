@@ -53,7 +53,7 @@ export default async function ServicePage({ params }: Props) {
               Design it in 3D
               <ArrowDown className="size-4" aria-hidden />
             </a>
-            <Link href="/estimates" className={buttonVariants({ variant: "outline" })}>
+            <Link href="/estimates" prefetch={false} className={buttonVariants({ variant: "outline" })}>
               Get an estimate
             </Link>
           </>

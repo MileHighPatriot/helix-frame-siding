@@ -46,7 +46,7 @@ export function HomeHero() {
             Helix builds the skeleton and the exterior envelope of Denver homes, then keeps the electrician, the plumber, and the roofer on one schedule. One crew answers for the whole shell.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/estimates" className={buttonVariants({ size: "lg" })}>
+            <Link href="/estimates" prefetch={false} className={buttonVariants({ size: "lg" })}>
               Get an estimate
               <ArrowUpRight className="size-4" aria-hidden />
             </Link>

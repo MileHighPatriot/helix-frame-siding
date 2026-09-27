@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { buttonVariants } from "@/components/ui/button";
-import { company, nav, secondaryNav, services } from "@/lib/content";
+import { company, formRoutes, nav, secondaryNav, services } from "@/lib/content";
 import { cn } from "cn";
 
 export function SiteFooter() {
@@ -17,7 +17,7 @@ export function SiteFooter() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-            <Link href="/estimates" className={buttonVariants({ size: "lg" })}>
+            <Link href="/estimates" prefetch={false} className={buttonVariants({ size: "lg" })}>
               Get an estimate
               <ArrowUpRight className="size-4" aria-hidden />
             </Link>
@@ -75,7 +75,11 @@ function FooterColumn({ title, links }: { title: string; links: readonly { href:
       <ul className="mt-4 space-y-2.5 text-sm">
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className={cn("text-foreground/85 transition-colors hover:text-copper")}>
+            <Link
+              href={link.href}
+              prefetch={formRoutes.includes(link.href) ? false : undefined}
+              className={cn("text-foreground/85 transition-colors hover:text-copper")}
+            >
               {link.label}
             </Link>
           </li>

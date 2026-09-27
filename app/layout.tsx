@@ -9,9 +9,11 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
+// Small labels only, so it loads after the fonts the first screen needs.
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false,
 });
 
 const fraunces = Fraunces({
