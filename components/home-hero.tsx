@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Box } from "lucide-react";
+import { ArrowUpRight, Box, Phone } from "lucide-react";
 import { Photo } from "@/components/photo";
 import { buttonVariants } from "@/components/ui/button";
 import { company, heroPhoto } from "@/lib/content";
@@ -9,7 +9,7 @@ import { cn } from "cn";
 const facts = [
   { label: "Framing since", value: String(company.founded) },
   { label: "Self-performed", value: "Frame and skin" },
-  { label: "Shop", value: "Decatur Street, Denver" },
+  { label: "Shop", value: "Denver, CO" },
 ];
 
 function rise(delay: number, distance = 24) {
@@ -45,11 +45,15 @@ export function HomeHero() {
           <p className="text-lg leading-8 text-pretty text-white/80">
             Helix builds the skeleton and the exterior envelope of Denver homes, then keeps the electrician, the plumber, and the roofer on one schedule. One crew answers for the whole shell.
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-col gap-3 max-sm:order-first sm:flex-row">
             <Link href="/estimates" prefetch={false} className={buttonVariants({ size: "lg" })}>
               Get an estimate
               <ArrowUpRight className="size-4" aria-hidden />
             </Link>
+            <a href={company.phoneHref} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "border-white/35 text-white hover:border-white/70 hover:bg-white/10 sm:hidden")}>
+              <Phone className="size-4" aria-hidden />
+              Call {company.phone}
+            </a>
             <Link href="/studio" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "border-white/35 text-white hover:border-white/70 hover:bg-white/10")}>
               <Box className="size-4" aria-hidden />
               Design it in 3D

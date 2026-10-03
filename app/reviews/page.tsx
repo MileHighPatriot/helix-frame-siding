@@ -12,7 +12,7 @@ export default function ReviewsPage() {
   return (
     <>
       <PageHero
-        kicker="Reviews"
+        kicker="Sample reviews"
         title="What owners say after the punch."
         lede="Notes from owners across Denver and the Front Range, each tied to a neighborhood and the kind of work Helix actually did."
       />

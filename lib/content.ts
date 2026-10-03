@@ -8,8 +8,7 @@ export const company = {
   phone: "(303) 555-0148",
   phoneHref: "tel:+13035550148",
   email: "estimating@helixframe.example",
-  address: "2145 Decatur Street, Suite B",
-  city: "Denver, CO 80211",
+  city: "Denver, CO",
   hours: "Monday–Friday, 7:00 a.m.–5:00 p.m.",
   area: "Denver metro and the Colorado Front Range",
   founded: 2011,
@@ -258,7 +257,7 @@ export const projects: Project[] = [
       "Fiber-cement lap that steps into the original reveal",
       "Temporary shoring so the kitchen stayed usable for ten days",
     ],
-    trades: ["Platte Form Concrete", "Ridgeline Roofing", "Northline Electric", "Clear Creek Mechanical"],
+    trades: ["Granitebell Concrete", "Tallowpine Roofing", "Quillfeather Electric", "Copperwren Mechanical"],
     outcome:
       "The addition reads as part of the bungalow from the alley, and the kitchen opened the week the siding was punched.",
     figures: [
@@ -286,7 +285,7 @@ export const projects: Project[] = [
       "Lap siding with a 6-inch reveal and copper corner accents",
       "Rebuilt window pans at fourteen openings",
     ],
-    trades: ["Glassline Windows"],
+    trades: ["Paneworth Windows"],
     outcome:
       "The elevations went back to a single reveal, and the spring storm that followed stayed outside.",
     figures: [
@@ -314,7 +313,7 @@ export const projects: Project[] = [
       "Switchback stair with a mid landing",
       "Cable-and-wood guard coordinated to the stair code",
     ],
-    trades: ["Platte Form Concrete"],
+    trades: ["Granitebell Concrete"],
     outcome:
       "The deck is independent of the brick, and the stair lands at the garage without a makeshift step.",
     figures: [
@@ -342,7 +341,7 @@ export const projects: Project[] = [
       "Reframed window seat that shared the same wall",
       "Sequence that let the plumber move the stack before drywall",
     ],
-    trades: ["Front Range Pipe", "Interior Plane Drywall", "Northline Electric"],
+    trades: ["Bramblewick Plumbing", "Kestrelwall Drywall", "Quillfeather Electric"],
     outcome:
       "One room now, with the beam invisible and the stack relocated before the plaster crew arrived.",
     figures: [
@@ -370,7 +369,7 @@ export const projects: Project[] = [
       "Board-and-batten on the alley elevation, lap on the yard side",
       "Stair opening coordinated with the mechanical closet",
     ],
-    trades: ["Platte Form Concrete", "Ridgeline Roofing", "Clear Creek Mechanical", "Northline Electric"],
+    trades: ["Granitebell Concrete", "Tallowpine Roofing", "Copperwren Mechanical", "Quillfeather Electric"],
     outcome:
       "The studio dried in before the first snow, and the alley elevation matches the house across the yard.",
     figures: [
@@ -398,7 +397,7 @@ export const projects: Project[] = [
       "Entry pavilion framed and wrapped in the same system",
       "Metal flashing at the stone base, coordinated with the mason",
     ],
-    trades: ["Ridgeline Roofing", "Stonework by Field & Course"],
+    trades: ["Tallowpine Roofing", "Stonework by Field & Course"],
     outcome:
       "The pavilion and the house share one rhythm, and the west wall has a cavity that can actually dry.",
     figures: [
@@ -423,10 +422,10 @@ export const projects: Project[] = [
     scope: [
       "Sistered posts hidden inside the existing column wraps",
       "New roof framing and a cricket against the second floor",
-      "Window package openings framed for Glassline",
+      "Window package openings framed for Paneworth Windows",
       "Siding returns that die into the original brick",
     ],
-    trades: ["Glassline Windows", "Ridgeline Roofing", "Northline Electric"],
+    trades: ["Paneworth Windows", "Tallowpine Roofing", "Quillfeather Electric"],
     outcome:
       "The porch still looks like the original elevation, and it is ready for glass without a second frame.",
     figures: [
@@ -454,7 +453,7 @@ export const projects: Project[] = [
       "Lap siding to match the 1970s house",
       "One permit set covering both structures",
     ],
-    trades: ["Platte Form Concrete", "Northline Electric"],
+    trades: ["Granitebell Concrete", "Quillfeather Electric"],
     outcome:
       "Both structures were permitted together and inspected on the same afternoon.",
     figures: [
@@ -530,7 +529,7 @@ export const blueprints: Blueprint[] = [
       "Building section through the new ridge and the existing bungalow roof. The valley is framed, not overframed onto the old rafters.",
     notes: [
       "Existing rafters sistered for four feet back from the tie-in",
-      "Cricket framed before shingles, coordinated with Ridgeline",
+      "Cricket framed before shingles, coordinated with Tallowpine",
       "New wall sheathing laps the existing weather barrier by 6 inches",
     ],
   },

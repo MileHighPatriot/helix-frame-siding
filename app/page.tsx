@@ -119,6 +119,7 @@ export default function HomePage() {
       <section className="border-y border-border bg-card">
         <div className="shell grid gap-12 py-24 md:py-32 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-20">
           <Reveal>
+            <p className="label-mono mb-4">Sample reviews</p>
             <p className="eyebrow">{quote.neighborhood} · {quote.project}</p>
             <blockquote className="display-md mt-6 text-balance">“{quote.quote}”</blockquote>
             <p className="mt-8 text-sm">
@@ -144,7 +145,7 @@ export default function HomePage() {
 
       <section className="overflow-hidden py-14">
         <div className="shell mb-8 flex items-center justify-between gap-4">
-          <p className="eyebrow">The trade bench</p>
+          <p className="eyebrow">The trade bench (sample partners)</p>
           <Link href="/trades" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
             How the bench is scheduled
           </Link>

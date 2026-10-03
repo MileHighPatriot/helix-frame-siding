@@ -40,8 +40,6 @@ export function SiteFooter() {
           <div>
             <p className="label-mono">Shop</p>
             <address className="mt-4 text-sm leading-6 not-italic">
-              {company.address}
-              <br />
               {company.city}
               <br />
               <span className="text-muted-foreground">{company.hours}</span>
@@ -59,6 +57,9 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border">
+        <p className="shell pt-6 text-sm leading-6 text-muted-foreground">
+          Concept project designed by 5280 Web Solutions. Helix is fictional; people, reviews, and details are illustrative.
+        </p>
         <div className="shell flex flex-col gap-2 py-6 font-mono text-[0.68rem] tracking-[0.12em] text-muted-foreground uppercase sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Helix Frame & Siding</p>
           <p>Registration {company.registration} · {company.area}</p>

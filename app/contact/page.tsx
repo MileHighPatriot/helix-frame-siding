@@ -34,8 +34,6 @@ export default function ContactPage() {
           <div>
             <p className="eyebrow">Shop</p>
             <p className="mt-2 leading-7">
-              {company.address}
-              <br />
               {company.city}
               <br />
               {company.hours}

@@ -42,6 +42,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
+        <aside aria-label="Concept project notice" className="ink border-b border-border">
+          <p className="shell py-2.5 text-sm leading-5 text-pretty">
+            Concept project: a sample site built by 5280 Web Solutions. Helix Frame & Siding is not a real company.{" "}
+            <a href="https://5280webs.com" className="font-medium whitespace-nowrap text-copper underline underline-offset-4 hover:text-foreground">
+              See more at 5280webs.com
+            </a>
+          </p>
+        </aside>
         <SiteHeader />
         <main id="content" className="flex-1">
           {children}
