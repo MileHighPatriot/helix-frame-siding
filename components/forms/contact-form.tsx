@@ -38,7 +38,7 @@ export function ContactForm() {
       <SuccessPanel
         reference={reference}
         title="Message received."
-        copy="Someone at the Decatur shop will answer. If the job is ready to price, the estimate form is the faster path."
+        copy="Someone at the shop will answer. If the job is ready to price, the estimate form is the faster path."
         onReset={() => {
           setValues(empty);
           setStatus("idle");

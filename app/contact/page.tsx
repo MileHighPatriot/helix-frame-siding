@@ -14,7 +14,7 @@ export default function ContactPage() {
     <>
       <PageHero
         kicker="Contact"
-        title="The shop is on Decatur Street."
+        title="The shop is in Denver."
         lede="Call for a schedule question. Use the form if you want a person to read a note before they ring you back. Estimates and permits have their own requests."
       />
       <section className="shell grid gap-10 py-14 md:grid-cols-2">

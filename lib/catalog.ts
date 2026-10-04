@@ -118,9 +118,9 @@ export const chapters = [
   },
   {
     year: "2024",
-    title: "Decatur Street",
-    image: m("story-decatur-shop.png"),
-    copy: "The shop moved to a bay in the Highlands, with Sofia on the estimates and Evan on the schedule. Ruthie runs the lumber. Daniel runs the permit counters. Framing and siding stayed in house. The address is 2145 Decatur Street, Suite B, and the door still opens at seven.",
+    title: "The first shop",
+    image: m("story-first-shop.png"),
+    copy: "The shop moved to a bay in the Highlands, with Sofia on the estimates and Evan on the schedule. Ruthie runs the lumber. Daniel runs the permit counters. Framing and siding stayed in house. The door still opens at seven.",
   },
   {
     year: "Now",
@@ -178,7 +178,7 @@ export const team = [
     role: "Shop lead",
     since: "2014",
     image: m("portrait-ruthie-lang.png"),
-    bio: "Ruthie runs the Decatur bay. Lumber is racked by length, beams are stickered, and a crew does not leave in the morning short a hanger because the order was a guess.",
+    bio: "Ruthie runs the shop bay. Lumber is racked by length, beams are stickered, and a crew does not leave in the morning short a hanger because the order was a guess.",
   },
   {
     name: "Evan Brooks",
