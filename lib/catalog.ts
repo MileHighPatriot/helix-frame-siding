@@ -96,7 +96,7 @@ export const chapters = [
     year: "2011",
     title: "A bay in Globeville",
     image: m("story-globeville-bay.png"),
-    copy: "Lena Hart and two framers rented a bay off Washington Street and took wall packages other crews did not want. The name Helix came from the way a stair opening twists through a floor: a simple shape that has to be exact. They owned a truck, a radial-arm saw, and a habit of measuring the existing plate before they trusted a drawing.",
+    copy: "Lena Hart and two framers rented a bay in Globeville and took wall packages other crews did not want. The name Helix came from the way a stair opening twists through a floor: a simple shape that has to be exact. They owned a truck, a radial-arm saw, and a habit of measuring the existing plate before they trusted a drawing.",
   },
   {
     year: "2014",
